@@ -9,14 +9,57 @@
 <body>
   <div class="app-shell">
     <div class="topbar"><div class="brand"><div class="brand__logo">OX</div><div class="brand__title">Work Dashboard (Demo)</div></div></div>
-    <div class="panel" style="max-width:780px; margin:18px auto">
-      <h3>Welcome to your demo work dashboard</h3>
-      <div id="content" class="muted">Loading...</div>
+    <div class="panel" style="max-width:1100px; margin:18px auto">
+      <h3>Distribution Analytics</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+        <div class="stat-card">
+          <div class="stat-value" id="statTotal">—</div>
+          <div class="stat-label">Total Contracts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statSigned">—</div>
+          <div class="stat-label">Signed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statOnboarded">—</div>
+          <div class="stat-label">Fully Onboarded (100%)</div>
+        </div>
+        <div style="flex:1; min-width:260px; display:flex; align-items:center; justify-content:center;">
+          <div id="donutWrap" style="width:160px;height:160px"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+        <div>
+          <h4 style="margin-top:0">Per-Vendor Performance</h4>
+          <div id="vendorChart" style="padding:8px;background:#fff;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.04)"></div>
+        </div>
+        <div>
+          <h4 style="margin-top:0">Recent Completions</h4>
+          <div id="recentList" style="padding:8px;background:#fff;border-radius:8px;max-height:420px;overflow:auto;box-shadow:0 4px 12px rgba(0,0,0,0.04)"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px">
+        <h4>All Contracts</h4>
+        <div id="allTable" style="background:#fff;padding:8px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.04)"></div>
+      </div>
     </div>
   </div>
-  <script>
-    (function(){ const p=new URLSearchParams(window.location.search); const t=p.get('token'); const el=document.getElementById('content'); if (!t) { el.textContent='No token provided'; return; } el.innerHTML=`<div>Token: <span class="mono">${t}</span></div><div style="margin-top:8px">This dashboard would normally show tasks, links, and onboarding steps.</div>`; })();
-  </script>
+  <style>
+    .stat-card{background:#fff;padding:12px;border-radius:8px;min-width:120px;box-shadow:0 6px 18px rgba(13,38,59,0.04);}
+    .stat-value{font-size:22px;font-weight:700}
+    .stat-label{font-size:12px;color:#6b7280}
+    .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .bar-label{width:160px;font-size:13px}
+    .bar-track{flex:1;height:14px;background:#eef2ff;border-radius:8px;overflow:hidden}
+    .bar-fill{height:100%;background:linear-gradient(90deg,#60a5fa,#06b6d4)}
+    .card{background:transparent}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #f3f4f6;font-size:13px}
+  </style>
+  <script src="/chat-widget.js"></script>
+  <script src="/dashboard.js"></script>
   <script src="/chat-widget.js"></script>
 </body>
 </html>

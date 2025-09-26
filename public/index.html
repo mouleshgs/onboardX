@@ -10,7 +10,10 @@
   <div class="app-shell">
     <div class="topbar">
       <div class="brand"><div class="brand__logo">OX</div><div class="brand__title">OnboardX — Contracts</div></div>
-      <div class="small muted">Signed files: <span id="signedCount">0</span></div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="small muted">Signed files: <span id="signedCount">0</span></div>
+        <button id="refreshBtn" class="btn small secondary" title="Refresh contracts">Refresh</button>
+      </div>
     </div>
 
     <div class="grid">
