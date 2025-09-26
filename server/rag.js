@@ -1,5 +1,7 @@
 const OpenAI = require('openai');
 const pineconePkg = require('@pinecone-database/pinecone');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 async function initPineconeClient() {
@@ -74,6 +76,47 @@ async function queryPinecone(index, vector, topK=3) {
   return (q && q.matches) || q || [];
 }
 
+// Minimal local keyword search over datasets to prefer exact/lexical matches
+function localKeywordSearchSync(query, topK = 5) {
+  const DATA_DIR = path.join(__dirname, '..', 'datasets');
+  let files;
+  try { files = fs.readdirSync(DATA_DIR); } catch (e) { return []; }
+  const rawWords = (query || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  // crude stopword filter to avoid small filler words dominating score
+  const stop = new Set(['the','and','or','an','a','to','of','in','on','for','is','what','how','when','where','by','with','be','you','your']);
+  const qWords = rawWords.filter(w => w.length >= 3 && !stop.has(w));
+  // if filtering removed too much, fall back to raw words
+  if (qWords.length === 0) qWords.push(...rawWords.filter(Boolean));
+  if (!qWords.length) return [];
+  const cand = [];
+  for (const f of files) {
+    const ext = path.extname(f).toLowerCase();
+    if (!['.md', '.markdown', '.txt', '.pdf'].includes(ext)) continue;
+    let txt = '';
+    try { txt = fs.readFileSync(path.join(DATA_DIR, f), 'utf8'); } catch (e) { continue; }
+    const textLower = txt.toLowerCase();
+  let filenameMatches = 0;
+  for (const w of qWords) if (f.toLowerCase().includes(w)) filenameMatches += 1;
+  let contentMatches = 0;
+  for (const w of qWords) if (textLower.indexOf(w) !== -1) contentMatches += 1;
+  // base score weights filename matches higher
+  let score = (1.5 * filenameMatches + contentMatches) / Math.max(1, qWords.length);
+  // phrase boost for likely exact phrases
+  if (textLower.indexOf('ai onboarding') !== -1 || textLower.indexOf('onboarding course') !== -1 || f.toLowerCase().indexOf('ai-onboarding') !== -1) score += 0.5;
+    // excerpt around first match
+    let excerpt = txt.slice(0, 800);
+    for (const w of qWords) {
+      const idx = textLower.indexOf(w);
+      if (idx !== -1) { excerpt = txt.slice(Math.max(0, idx - 120), Math.min(txt.length, idx + 680)); break; }
+    }
+    cand.push({ filename: f, text: excerpt, score });
+  }
+  cand.sort((a,b)=>b.score - a.score);
+  return cand.slice(0, topK);
+}
+
+
+
 async function callOpenAIChat(systemPrompt, userPrompt) {
   if (!process.env.OPENAI_API_KEY) return null;
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -89,6 +132,31 @@ async function callOpenAIChat(systemPrompt, userPrompt) {
 
 async function getReply(message, req) {
   if (!message || !message.trim()) return 'Please provide a message.';
+
+  // Quick local search first. If it yields a strong match (filename contains query
+  // words or high lexical overlap), prefer it — this avoids noisy vector matches.
+  try {
+    const local = localKeywordSearchSync(message, 5);
+    if (local && local.length) {
+      const top = local[0];
+      // if filename includes query terms or score high enough, return it directly
+      const qWords = (message || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+      const filenameTokens = (top.filename || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      const filenameMatch = qWords.every(w => filenameTokens.includes(w));
+      if (filenameMatch || top.score >= 0.6) {
+        // If OpenAI is available, ask it to craft a concise answer using the local excerpt as context
+        const systemPrompt = 'You are an assistant that answers questions about onboarding documents. Use the provided context and cite sources when possible.';
+        const userPrompt = `Context:\nSource: ${top.filename}\n${top.text}\n\nQuestion:\n${message}`;
+        const aiReply = await callOpenAIChat(systemPrompt, userPrompt);
+        if (aiReply) return aiReply;
+        return `From ${top.filename}:\n${top.text.trim().slice(0,1000)}${top.text.length>1000 ? '...' : ''}`;
+      }
+    }
+  } catch (e) {
+    // ignore local search errors and continue to embedding/Pinecone path
+  }
+
+  // Otherwise proceed with embedding + Pinecone as before
   const { pineconeClient, index } = await initPineconeClient();
   // embedding
   let emb = await embedText(message);

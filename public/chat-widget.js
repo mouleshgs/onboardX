@@ -71,10 +71,76 @@
   function appendMessage(text, who='bot') {
     const row = document.createElement('div'); row.className = 'rag-msg-row ' + (who === 'user' ? 'user' : 'bot');
     const bubble = document.createElement('div'); bubble.className = 'rag-msg ' + (who === 'user' ? 'user' : 'bot');
-    bubble.textContent = text;
+    if (who === 'user') {
+      // user messages shouldn't be interpreted as HTML
+      bubble.textContent = text;
+    } else {
+      // bot messages may contain markdown/markup; render to HTML safely
+      bubble.innerHTML = renderMarkdown(text);
+    }
     row.appendChild(bubble);
     messagesEl.appendChild(row);
     autoScroll();
+  }
+
+  // Minimal markdown renderer — escapes HTML then applies simple markdown rules.
+  // Not a full parser; for robust behavior use a library like marked + DOMPurify.
+  function escapeHtml(unsafe) {
+    return unsafe
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function renderMarkdown(md) {
+    if (!md) return '';
+    // preserve existing newlines for paragraph splitting
+    let s = String(md);
+    // escape HTML first
+    s = escapeHtml(s);
+
+    // code blocks ``` ```
+    s = s.replace(/```([\s\S]*?)```/g, function(_, code) {
+      return '<pre><code>' + code.replace(/&lt;/g, '&lt;') + '</code></pre>';
+    });
+
+    // inline code `code`
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // headings
+    s = s.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
+    s = s.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
+    s = s.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+    s = s.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    s = s.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    s = s.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+
+    // bold and italics
+    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/__(.*?)__/g, '<strong>$1</strong>');
+    s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    s = s.replace(/_(.*?)_/g, '<em>$1</em>');
+
+    // links [text](url)
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    // unordered lists: lines starting with - or *
+    // convert list lines to <li>, then wrap contiguous <li> blocks with <ul>
+    s = s.replace(/^[-\*] (.*)$/gm, '<li>$1</li>');
+    s = s.replace(/(<li>[\s\S]*?<\/li>)(?![\s\S]*<li>)/g, function(m){ return '<ul>' + m + '</ul>'; });
+    s = s.replace(/(<\/li>)\n<li>/g, '</li><li>');
+
+    // paragraphs: split on two or more newlines
+    const parts = s.split(/\n{2,}/g).map(p => p.trim()).filter(Boolean);
+    // If parts already include block tags like <h|ul|pre>, don't wrap them
+    const wrapped = parts.map(part => {
+      if (/^<(h[1-6]|ul|pre|blockquote|li|ol)/i.test(part)) return part;
+      return '<p>' + part + '</p>';
+    }).join('');
+
+    return wrapped;
   }
 
   function autoScroll() {
