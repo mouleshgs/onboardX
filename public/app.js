@@ -16,6 +16,10 @@
   const pdfFrame = el('pdfFrame');
   const nameInput = el('name');
   const statusDiv = el('status');
+  const accessBtn = el('accessBtn');
+  const accessModal = el('accessModal');
+  const accessContent = el('accessContent');
+  const accessClose = el('accessClose');
 
   const signedCountEl = el('signedCount');
 
@@ -108,6 +112,12 @@
     pdfFrame.src = `/contract/${c.id}/pdf`;
     pdfFrame.dataset.contractId = c.id;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // show Access Tools button when contract is signed
+    if (c.status === 'signed') {
+      accessBtn.style.display = 'inline-block';
+    } else {
+      accessBtn.style.display = 'none';
+    }
   }
 
   el('submit').addEventListener('click', async ()=>{
@@ -129,6 +139,38 @@
     }
     await loadContracts();
   });
+
+  // Access button: fetch access details and show modal
+  accessBtn.addEventListener('click', async ()=>{
+    const id = pdfFrame.dataset.contractId;
+    if (!id) return;
+    accessContent.innerHTML = 'Loading...';
+    accessModal.style.display = 'flex';
+    try {
+      const r = await fetch(`/api/contract/${id}/access`);
+      const j = await r.json();
+      if (!r.ok) {
+        accessContent.innerHTML = `<div class="muted">Error: ${j.error || j.detail || 'failed'}</div>`;
+        return;
+      }
+      const a = j.access;
+      const div = document.createElement('div'); div.className = 'access-list';
+      const cred = document.createElement('div'); cred.className = 'access-item'; cred.innerHTML = `<div><strong>Username:</strong> <span class="mono">${a.credentials.username}</span></div><div><strong>Password:</strong> <span class="mono">${a.credentials.password}</span></div><div><strong>Token:</strong> <span class="mono">${a.credentials.token}</span></div>`;
+      div.appendChild(cred);
+      a.tools.forEach(t => {
+        const it = document.createElement('div'); it.className = 'access-item'; it.innerHTML = `<strong>${t.name}</strong><div><a href="${t.url}" target="_blank">Open ${t.name}</a></div>`;
+        div.appendChild(it);
+      });
+      accessContent.innerHTML = '';
+      accessContent.appendChild(div);
+      // refresh contracts view so vendor can see unlocked status
+      await loadContracts();
+    } catch (e) {
+      accessContent.innerHTML = `<div class="muted">Network error</div>`;
+    }
+  });
+
+  accessClose.addEventListener('click', ()=>{ accessModal.style.display = 'none'; });
 
   await loadContracts();
 })();

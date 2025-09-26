@@ -39,6 +39,108 @@ ensureKeys();
 // Simple in-memory contract registry for demo
 const contracts = {};
 
+// Generate mock access credentials for a contract and optionally notify via Slack/webhook
+async function generateAccessForContract(contractId, req) {
+  const c = contracts[contractId];
+  if (!c) return null;
+  if (c.access && c.access.unlocked) return c.access; // already generated
+
+  const now = Date.now();
+  const expiresAt = new Date(now + (24 * 60 * 60 * 1000)).toISOString(); // 24h
+  const username = `user-${nanoid(6)}`;
+  const password = crypto.randomBytes(8).toString('base64').replace(/\/+|=|\+/g,'').slice(0,12);
+  const token = nanoid(24);
+
+  // build tool links (prefer TOOL_BASE_URL env, otherwise derive from request)
+  const base = process.env.TOOL_BASE_URL || (req ? `${req.protocol}://${req.get('host')}` : null) || '';
+  const tools = [
+    { name: 'Demo Portal', url: `${base}/demo-portal?token=${token}` },
+    { name: 'Work Dashboard', url: `${base}/dashboard?token=${token}` }
+  ];
+
+  const access = {
+    unlocked: true,
+    generatedAt: new Date(now).toISOString(),
+    expiresAt,
+    credentials: { username, password, token },
+    tools,
+    slackNotified: false,
+    webhookNotified: false
+  };
+
+  // Slack invite link support:
+  // 1) If operator provides SLACK_JOIN_LINK in .env, include it as the Slack workspace invite link.
+  // 2) Otherwise, if SLACK_ADMIN_TOKEN + SLACK_TEAM_ID are provided, attempt to call admin.users.invite
+  //    to invite the distributor by email. Note: this API requires an admin token with proper scopes.
+  try {
+    // Priority: explicit join link
+    if (process.env.SLACK_JOIN_LINK) {
+      tools.unshift({ name: 'Slack Workspace', url: process.env.SLACK_JOIN_LINK });
+      access.slackInviteProvided = true;
+    } else if (process.env.SLACK_ADMIN_TOKEN && process.env.SLACK_TEAM_ID && c.assignedToEmail) {
+      const fetch = require('node-fetch');
+      const params = new URLSearchParams();
+      params.append('team_id', process.env.SLACK_TEAM_ID);
+      params.append('email', c.assignedToEmail);
+      // resend if previously invited
+      params.append('resend', 'true');
+
+      const resp = await fetch('https://slack.com/api/admin.users.invite', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.SLACK_ADMIN_TOKEN}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+      });
+      const jr = await resp.json().catch(() => ({}));
+      if (jr && jr.ok) {
+        // admin.users.invite may not always return an invite URL; include a friendly message instead
+        if (jr.url) {
+          tools.unshift({ name: 'Slack Workspace', url: jr.url });
+        } else {
+          // fallback: point to the configured join link if available or the workspace root
+          const fallback = process.env.SLACK_JOIN_FALLBACK || `https://slack.com/signin`;
+          tools.unshift({ name: 'Slack Workspace', url: fallback });
+        }
+        access.slackInviteProvided = true;
+        access.slackAdminInvite = jr;
+      } else {
+        access.slackInviteError = jr && jr.error ? jr.error : 'invite_failed';
+      }
+    }
+  } catch (e) {
+    access.slackInviteError = e && e.message;
+  }
+
+  c.access = access;
+
+  // persist to Firestore if available
+  if (firestore) {
+    try { await firestore.collection('contracts').doc(contractId).update({ access: c.access }); } catch (e) { console.warn('Failed to persist access to Firestore', e && e.message); }
+  }
+
+  // Notify via incoming webhook if configured
+  try {
+    if (process.env.SLACK_WEBHOOK_URL) {
+      const fetch = require('node-fetch');
+      const text = `:tada: Access unlocked for contract *${contractId}* assigned to *${c.assignedToEmail || 'unknown'}*\n*Portal:* ${tools[0].url}`;
+      await fetch(process.env.SLACK_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ text }) });
+      c.access.webhookNotified = true;
+    } else if (process.env.SLACK_BOT_TOKEN && process.env.SLACK_NOTIFY_CHANNEL) {
+      // use Slack Web API to post message (no additional dependency)
+      const fetch = require('node-fetch');
+      const body = { channel: process.env.SLACK_NOTIFY_CHANNEL, text: `Access unlocked for contract ${contractId} — ${tools[0].url}` };
+      await fetch('https://slack.com/api/chat.postMessage', { method: 'POST', headers: { 'Authorization': `Bearer ${process.env.SLACK_BOT_TOKEN}`, 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+      c.access.slackNotified = true;
+    }
+  } catch (e) {
+    console.warn('Failed to notify Slack/webhook for access', e && e.message);
+  }
+
+  return c.access;
+}
+
 // Optional Firestore integration (server-side). To enable, set one of:
 // - FIREBASE_SERVICE_ACCOUNT_JSON (the JSON service account as a string)
 // - FIREBASE_SERVICE_ACCOUNT_PATH (path to the service account JSON file)
@@ -532,6 +634,12 @@ app.post('/api/sign', async (req, res) => {
       }
 
       // In real app: notify vendor dashboard via websocket or push. Here we just return metadata.
+      // Generate access tools (mock) for distributor so they can start immediately
+      try {
+        const access = await generateAccessForContract(contractId, req).catch(() => null);
+        if (access) metadata.access = access;
+      } catch (e) {}
+
       return res.json({ ok: true, metadata });
     } catch (e) {
       console.error('Signed file storage failed:', e && e.message);
@@ -540,6 +648,22 @@ app.post('/api/sign', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal error', detail: err.message });
+  }
+});
+
+// Return generated access for a contract (if unlocked)
+app.get('/api/contract/:id/access', async (req, res) => {
+  const c = contracts[req.params.id];
+  if (!c) return res.status(404).json({ error: 'Not found' });
+  if (c.access && c.access.unlocked) return res.json({ ok: true, access: c.access });
+  // If not generated yet, generate now (only allowed if contract is signed)
+  if (c.status !== 'signed') return res.status(403).json({ error: 'Contract not signed yet' });
+  try {
+    const access = await generateAccessForContract(req.params.id, req);
+    return res.json({ ok: true, access });
+  } catch (e) {
+    console.error('Failed to generate access', e && e.message);
+    return res.status(500).json({ error: 'Failed to generate access' });
   }
 });
 
