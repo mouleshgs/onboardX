@@ -8,8 +8,8 @@
 <body>
   <div class="auth-container">
     <div class="auth-card">
-      <h2>Sign in / Sign up</h2>
-      <p>Select role and sign in with Google or email</p>
+      <h2>Welcome to OnboardX</h2>
+      <p class="muted">Sign in to review and sign contracts</p>
 
       <div class="role-row">
         <label><input type="radio" name="role" value="distributor" checked /> Distributor</label>
@@ -17,15 +17,15 @@
       </div>
 
       <div id="firebaseUi">
-        <button id="googleSign">Sign in with Google</button>
+        <button id="googleSign" class="btn" style="width:100%">Sign in with Google</button>
       </div>
 
       <div class="sep">Or</div>
       <input id="email" placeholder="Email" />
       <input id="password" type="password" placeholder="Password" />
-      <div>
-        <button id="signup">Sign up</button>
-        <button id="signin">Sign in</button>
+      <div class="auth-actions">
+        <button id="signup" class="btn secondary">Sign up</button>
+        <button id="signin" class="btn">Sign in</button>
       </div>
 
     </div>

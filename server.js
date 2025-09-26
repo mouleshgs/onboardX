@@ -39,6 +39,36 @@ ensureKeys();
 // Simple in-memory contract registry for demo
 const contracts = {};
 
+// Optional Firestore integration (server-side). To enable, set one of:
+// - FIREBASE_SERVICE_ACCOUNT_JSON (the JSON service account as a string)
+// - FIREBASE_SERVICE_ACCOUNT_PATH (path to the service account JSON file)
+// - or set GOOGLE_APPLICATION_CREDENTIALS to a credentials path and have default application credentials available
+let firestore = null;
+try {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON || process.env.FIREBASE_SERVICE_ACCOUNT_PATH || process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    const admin = require('firebase-admin');
+    let cred;
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+      const sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+      cred = admin.credential.cert(sa);
+      admin.initializeApp({ credential: cred });
+    } else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH) {
+      const saPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
+      const sa = require(saPath);
+      cred = admin.credential.cert(sa);
+      admin.initializeApp({ credential: cred });
+    } else {
+      // Use application default credentials
+      admin.initializeApp();
+    }
+    firestore = admin.firestore();
+    console.log('Firestore initialized');
+  }
+} catch (e) {
+  console.warn('Firestore not initialized:', e && e.message);
+  firestore = null;
+}
+
 // No sample contract at startup. Contracts are created by vendor uploads.
 
 app.get('/api/contracts', (req, res) => {
@@ -67,7 +97,11 @@ app.post('/api/vendor/upload', upload.single('file'), async (req, res) => {
       if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
       const outPath = path.join(uploadsDir, `${id}.pdf`);
       fs.writeFileSync(outPath, req.file.buffer);
-      contracts[id] = { id, file: `uploads/${id}.pdf`, status: 'uploaded', createdAt: new Date().toISOString(), vendorId, assignedToEmail: distributorEmail, originalName };
+      contracts[id] = { id, file: `uploads/${id}.pdf`, status: 'pending', createdAt: new Date().toISOString(), vendorId, vendorEmail: req.body.vendorEmail, assignedToEmail: distributorEmail, originalName };
+      // persist to Firestore if available
+      if (firestore) {
+        try { await firestore.collection('contracts').doc(id).set(contracts[id]); } catch (e) { console.warn('Failed to save contract to Firestore', e && e.message); }
+      }
       return res.json({ ok: true, id, file: contracts[id].file });
     }
 
@@ -87,7 +121,10 @@ app.post('/api/vendor/upload', upload.single('file'), async (req, res) => {
       if (list.result && list.result.links && list.result.links.length) link = list.result.links[0].url.replace('?dl=0', '?dl=1');
     }
 
-    contracts[id] = { id, file: dropPath, status: 'uploaded', createdAt: new Date().toISOString(), vendorId, assignedToEmail: distributorEmail, originalName, storageUrl: link };
+    contracts[id] = { id, file: dropPath, status: 'pending', createdAt: new Date().toISOString(), vendorId, vendorEmail: req.body.vendorEmail, assignedToEmail: distributorEmail, originalName, storageUrl: link };
+    if (firestore) {
+      try { await firestore.collection('contracts').doc(id).set(contracts[id]); } catch (e) { console.warn('Failed to save contract to Firestore', e && e.message); }
+    }
     return res.json({ ok: true, id, storageUrl: link });
   } catch (e) {
     console.error('vendor upload failed', e && e.message);
@@ -99,6 +136,42 @@ app.get('/api/contract/:id', (req, res) => {
   const c = contracts[req.params.id];
   if (!c) return res.status(404).json({ error: 'Not found' });
   res.json(c);
+});
+
+// If Firestore is enabled, prefer returning from Firestore
+app.get('/api/vendor/contracts', async (req, res) => {
+  const { vendorEmail, vendorId } = req.query;
+  if (firestore) {
+    try {
+      let q = firestore.collection('contracts');
+      if (vendorEmail) q = q.where('vendorEmail', '==', vendorEmail);
+      if (vendorId) q = q.where('vendorId', '==', vendorId);
+      const snap = await q.get();
+      const list = [];
+      snap.forEach(d => list.push(d.data()));
+      return res.json(list);
+    } catch (e) {
+      console.warn('Error querying Firestore for vendor contracts', e && e.message);
+      // fall through to in-memory
+    }
+  }
+  const list = Object.values(contracts).filter(c => {
+    if (vendorEmail && c.vendorEmail && c.vendorEmail.toLowerCase() === vendorEmail.toLowerCase()) return true;
+    if (vendorId && c.vendorId && c.vendorId === vendorId) return true;
+    return false;
+  });
+  res.json(list);
+});
+
+// Return contracts belonging to a vendor (by vendorEmail or vendorId)
+app.get('/api/vendor/contracts', (req, res) => {
+  const { vendorEmail, vendorId } = req.query;
+  const list = Object.values(contracts).filter(c => {
+    if (vendorEmail && c.vendorEmail && c.vendorEmail.toLowerCase() === vendorEmail.toLowerCase()) return true;
+    if (vendorId && c.vendorId && c.vendorId === vendorId) return true;
+    return false;
+  });
+  res.json(list);
 });
 
 app.get('/contract/:id/pdf', async (req, res) => {
@@ -448,6 +521,15 @@ app.post('/api/sign', async (req, res) => {
       c.signedAt = metadata.signedAt;
       c.signedFile = outName;
       c.storageUrl = metadata.storageUrl || null;
+
+      // persist status to Firestore if available
+      if (firestore) {
+        try {
+          await firestore.collection('contracts').doc(contractId).update({ status: 'signed', signedAt: c.signedAt, signedFile: c.signedFile, storageUrl: c.storageUrl });
+        } catch (e) {
+          console.warn('Failed to update Firestore contract status', e && e.message);
+        }
+      }
 
       // In real app: notify vendor dashboard via websocket or push. Here we just return metadata.
       return res.json({ ok: true, metadata });

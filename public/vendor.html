@@ -6,28 +6,36 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Vendor Dashboard</h1>
-    <p>Upload a contract PDF and send it to a distributor by email.</p>
-
-    <div class="card">
-      <div style="flex:1">
-        <label>Distributor email</label><br/>
-        <input id="distEmail" placeholder="distributor@example.com" />
-        <label style="margin-top:8px">Your email</label><br/>
-        <input id="vendorEmail" placeholder="you@vendor.com" />
-        <label style="margin-top:8px">Select PDF</label><br/>
-        <input id="fileInput" type="file" accept="application/pdf" />
-      </div>
-      <div style="align-self:center">
-        <button id="sendBtn">Upload & Send</button>
-      </div>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><div class="brand__logo">OX</div><div class="brand__title">Vendor Dashboard</div></div>
+      <div><button onclick="logout()" class="btn secondary">Logout</button></div>
     </div>
 
-    <div id="result" style="margin-top:12px"></div>
+    <div class="panel" style="max-width:820px; margin:0 auto">
+      <h3>Upload a contract PDF and send it to a distributor</h3>
+      <div class="card">
+        <div style="flex:1">
+          <div class="form-row">
+            <label class="small muted">Distributor email</label>
+            <input id="distEmail" placeholder="distributor@example.com" type="email" />
+            <label class="small muted">Your email</label>
+            <input id="vendorEmail" placeholder="you@vendor.com" />
+            <label class="small muted">Select PDF</label>
+            <input id="fileInput" type="file" accept="application/pdf" />
+          </div>
+        </div>
+        <div style="align-self:center">
+          <button id="sendBtn" class="btn">Upload & Send</button>
+        </div>
+      </div>
 
-    <div style="margin-top:20px">
-      <button onclick="logout()">Logout</button>
+      <div id="result" style="margin-top:12px"></div>
+      
+      <div style="margin-top:22px">
+        <h4>Your contracts</h4>
+        <div id="vendorContracts" class="list"></div>
+      </div>
     </div>
   </div>
   <script>
@@ -53,6 +61,40 @@
         document.getElementById('result').textContent = 'Error: ' + (j.error || j.detail || 'unknown');
       }
     });
+
+    // vendor contracts list
+    const vendorContractsEl = document.getElementById('vendorContracts');
+    async function loadVendorContracts(){
+      const vendor = document.getElementById('vendorEmail').value.trim();
+      if (!vendor) return;
+      const q = new URLSearchParams({ vendorEmail: vendor });
+      const r = await fetch('/api/vendor/contracts?'+q.toString());
+      const list = await r.json();
+      vendorContractsEl.innerHTML = '';
+      if (!list.length) { vendorContractsEl.innerHTML = '<div class="muted">No contracts yet</div>'; return; }
+      list.slice().reverse().forEach(c => {
+        const card = document.createElement('div'); card.className = 'card';
+        const meta = document.createElement('div'); meta.className = 'meta';
+        const title = document.createElement('div'); title.className = 'title'; title.textContent = c.originalName || c.id;
+        const sub = document.createElement('div'); sub.className = 'sub'; sub.textContent = `ID: ${c.id} • ${c.status || 'pending'}`;
+        meta.appendChild(title); meta.appendChild(sub);
+        const right = document.createElement('div'); right.style.marginLeft='auto';
+        const distributor = document.createElement('div'); distributor.className='small muted'; distributor.textContent = `To: ${c.assignedToEmail || '—'}`;
+        const btn = document.createElement('button'); btn.className='btn'; btn.textContent = c.status === 'signed' ? 'View Signed' : 'View';
+        btn.addEventListener('click', ()=>{
+          // open Dropbox link or local via server
+          if (c.storageUrl) window.open(c.storageUrl, '_blank'); else window.open(`/signed/${c.signedFile || c.file}`,'_blank');
+        });
+        right.appendChild(distributor); right.appendChild(btn);
+        card.appendChild(meta); card.appendChild(right);
+        vendorContractsEl.appendChild(card);
+      });
+    }
+
+    // poll every 5s to pick up signed docs
+    setInterval(loadVendorContracts, 5000);
+    // initial load
+    loadVendorContracts();
   </script>
 </body>
 </html>

@@ -17,25 +17,27 @@
   const nameInput = el('name');
   const statusDiv = el('status');
 
-  // add a top-right logout button
-  const header = document.createElement('div');
-  header.style.display = 'flex';
-  header.style.justifyContent = 'flex-end';
-  header.style.marginBottom = '8px';
-  // search box for distributor
-  const searchInput = document.createElement('input');
-  searchInput.placeholder = 'Search by contract id or filename';
-  searchInput.style.marginRight = '8px';
-  searchInput.style.padding = '6px';
-  searchInput.style.borderRadius = '6px';
-  searchInput.style.border = '1px solid #e5e7eb';
-  header.appendChild(searchInput);
+  const signedCountEl = el('signedCount');
+
+  // search box (placed in the topbar if available)
+  let searchInput = document.querySelector('.topbar input[type=text]');
+  if (!searchInput) {
+    searchInput = document.createElement('input');
+    searchInput.placeholder = 'Search by contract id or filename';
+    searchInput.style.padding = '8px';
+    searchInput.style.borderRadius = '8px';
+    searchInput.style.border = '1px solid #eef2ff';
+    const topbar = document.querySelector('.topbar');
+    if (topbar) topbar.appendChild(searchInput);
+  }
+  // ensure there's a logout button
   const logoutBtn = document.createElement('button');
   logoutBtn.textContent = 'Logout';
+  logoutBtn.className = 'btn secondary';
+  logoutBtn.style.marginLeft = '8px';
   logoutBtn.addEventListener('click', ()=>{ localStorage.removeItem('onboardx_user'); window.location.replace('/login.html'); });
-  header.appendChild(logoutBtn);
-  const container = document.querySelector('.container');
-  if (container) container.insertBefore(header, container.firstChild);
+  const topbar = document.querySelector('.topbar');
+  if (topbar) topbar.appendChild(logoutBtn);
 
   // signature pad
   const canvas = el('sigPad');
@@ -71,30 +73,33 @@
       return idMatch || nameMatch;
     });
     if (!filteredBySearch.length) {
-      const p = document.createElement('div'); p.textContent = 'No contracts match your search.'; p.style.color='#6b7280'; contractsDiv.appendChild(p);
+      const p = document.createElement('div'); p.textContent = 'No contracts match your search.'; p.className = 'muted'; contractsDiv.appendChild(p);
+      if (signedCountEl) signedCountEl.textContent = '0';
       return;
     }
     filteredBySearch.forEach(c => {
       const card = document.createElement('div');
       card.className = 'card';
-      const title = document.createElement('div');
-      title.className = 'card-title';
-      title.textContent = c.originalName ? `${c.originalName} (${c.id})` : `${c.id}`;
-      // also show vendor email if available
-      if (c.vendorId || c.vendorEmail) {
-        const v = document.createElement('div'); v.className = 'card-meta'; v.style.marginTop = '6px'; v.textContent = `Vendor: ${c.vendorEmail || c.vendorId}`; card.appendChild(v);
-      }
       const meta = document.createElement('div');
-      meta.className = 'card-meta';
-      meta.textContent = `Status: ${c.status}`;
-      const btn = document.createElement('button');
-      btn.textContent = 'Open';
-      btn.addEventListener('click', ()=> openContract(c));
-      card.appendChild(title);
+      meta.className = 'meta';
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = c.originalName ? `${c.originalName}` : `${c.id}`;
+      const sub = document.createElement('div'); sub.className = 'sub'; sub.textContent = `${c.id} • Status: ${c.status}`;
+      meta.appendChild(title);
+      meta.appendChild(sub);
+      const btnWrap = document.createElement('div'); btnWrap.className = 'cta';
+      const btn = document.createElement('button'); btn.className = 'btn'; btn.textContent = 'Open'; btn.addEventListener('click', ()=> openContract(c));
+      btnWrap.appendChild(btn);
+      // vendor info
+      if (c.vendorId || c.vendorEmail) {
+        const v = document.createElement('div'); v.className = 'small muted'; v.textContent = `Vendor: ${c.vendorEmail || c.vendorId}`; btnWrap.appendChild(v);
+      }
       card.appendChild(meta);
-      card.appendChild(btn);
+      card.appendChild(btnWrap);
       contractsDiv.appendChild(card);
     });
+    if (signedCountEl) signedCountEl.textContent = filteredBySearch.filter(c => c.status === 'signed').length;
   }
 
   function openContract(c){

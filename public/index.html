@@ -6,21 +6,35 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>View & Sign Contract</h1>
-    <div id="contracts"></div>
+  <div class="app-shell">
+    <div class="topbar">
+      <div class="brand"><div class="brand__logo">OX</div><div class="brand__title">OnboardX — Contracts</div></div>
+      <div class="small muted">Signed files: <span id="signedCount">0</span></div>
+    </div>
 
-    <div id="viewer" style="display:none">
-      <iframe id="pdfFrame" src="" width="700" height="900"></iframe>
-
-      <h3>Sign below</h3>
-      <input id="name" placeholder="Full name" />
-      <div>
-        <canvas id="sigPad" width="500" height="150" style="border:1px solid #ccc"></canvas>
+    <div class="grid">
+      <div class="panel">
+        <h2>Your assigned contracts</h2>
+        <div id="contracts" class="list"></div>
       </div>
-      <button id="clear">Clear</button>
-      <button id="submit">Submit Signature</button>
-      <div id="status"></div>
+
+      <div class="panel viewer" id="viewer" style="display:none">
+        <div class="pdf-frame">
+          <iframe id="pdfFrame" src="" width="100%" height="100%" style="border:0"></iframe>
+        </div>
+
+        <div class="sig-card">
+          <div class="sig-controls">
+            <input id="name" placeholder="Full name" type="text" />
+            <div class="sig-actions">
+              <button id="clear" class="btn secondary">Clear</button>
+              <button id="submit" class="btn">Submit Signature</button>
+            </div>
+          </div>
+          <canvas id="sigPad"></canvas>
+          <div id="status" class="small muted"></div>
+        </div>
+      </div>
     </div>
   </div>
   <script src="/app.js"></script>
