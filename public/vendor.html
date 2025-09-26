@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Vendor Dashboard — OnboardX</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Vendor Dashboard</h1>
+    <p>Upload a contract PDF and send it to a distributor by email.</p>
+
+    <div class="card">
+      <div style="flex:1">
+        <label>Distributor email</label><br/>
+        <input id="distEmail" placeholder="distributor@example.com" />
+        <label style="margin-top:8px">Your email</label><br/>
+        <input id="vendorEmail" placeholder="you@vendor.com" />
+        <label style="margin-top:8px">Select PDF</label><br/>
+        <input id="fileInput" type="file" accept="application/pdf" />
+      </div>
+      <div style="align-self:center">
+        <button id="sendBtn">Upload & Send</button>
+      </div>
+    </div>
+
+    <div id="result" style="margin-top:12px"></div>
+
+    <div style="margin-top:20px">
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <script>
+    function logout(){ localStorage.removeItem('onboardx_user'); window.location.href = '/login.html'; }
+    (function(){ try{ const raw = localStorage.getItem('onboardx_user'); if (!raw) return window.location.replace('/login.html'); const u = JSON.parse(raw); if (u.role !== 'vendor') window.location.replace('/'); if (u.email) document.getElementById('vendorEmail').value = u.email; } catch(e){ window.location.replace('/login.html'); }})();
+
+    document.getElementById('sendBtn').addEventListener('click', async ()=>{
+      const dist = document.getElementById('distEmail').value.trim();
+      const vendor = document.getElementById('vendorEmail').value.trim() || 'vendor@local';
+      const f = document.getElementById('fileInput').files[0];
+      if (!dist) return alert('distributor email required');
+      if (!f) return alert('select a PDF file');
+      const fd = new FormData();
+      fd.append('file', f);
+      fd.append('distributorEmail', dist);
+      fd.append('vendorEmail', vendor);
+      fd.append('vendorId', vendor.replace(/[^a-z0-9]/gi,'').toLowerCase());
+      const res = await fetch('/api/vendor/upload', { method: 'POST', body: fd });
+      const j = await res.json();
+      if (res.ok) {
+        document.getElementById('result').innerHTML = `<div>Uploaded. Contract id: ${j.id} ${j.storageUrl ? `<div><a href="${j.storageUrl}" target="_blank">Open in Dropbox</a></div>` : ''}</div>`;
+      } else {
+        document.getElementById('result').textContent = 'Error: ' + (j.error || j.detail || 'unknown');
+      }
+    });
+  </script>
+</body>
+</html>

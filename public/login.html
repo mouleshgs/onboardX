@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>OnboardX — Login</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2>Sign in / Sign up</h2>
+      <p>Select role and sign in with Google or email</p>
+
+      <div class="role-row">
+        <label><input type="radio" name="role" value="distributor" checked /> Distributor</label>
+        <label><input type="radio" name="role" value="vendor" /> Vendor</label>
+      </div>
+
+      <div id="firebaseUi">
+        <button id="googleSign">Sign in with Google</button>
+      </div>
+
+      <div class="sep">Or</div>
+      <input id="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <div>
+        <button id="signup">Sign up</button>
+        <button id="signin">Sign in</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase config provided by user
+    const firebaseConfig = {
+      apiKey: "AIzaSyChHZzycxzAT_z_iQ4NKDFj95tqekeD-A4",
+      authDomain: "onboardx-1234.firebaseapp.com",
+      projectId: "onboardx-1234",
+      storageBucket: "onboardx-1234.firebasestorage.app",
+      messagingSenderId: "85849489997",
+      appId: "1:85849489997:web:b4c10d1d5cd942c2539204"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+  const db = firebase.firestore();
+
+    function selectedRole(){
+      const r = document.querySelector('input[name=role]:checked');
+      return r ? r.value : 'distributor';
+    }
+
+    document.getElementById('googleSign').addEventListener('click', async ()=>{
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try {
+        const res = await auth.signInWithPopup(provider);
+        const idToken = await res.user.getIdToken();
+        const role = selectedRole();
+  const email = res.user.email || '';
+  localStorage.setItem('onboardx_user', JSON.stringify({ uid: res.user.uid, role, email }));
+  // write to Firestore users collection (demo)
+  try { await db.collection('users').doc(res.user.uid).set({ email, role, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch (e) { console.warn('Firestore write failed', e); }
+  // optional: post to server to register role (demo)
+  try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
+        if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
+      } catch (e) { alert('Auth failed: '+e.message); }
+    });
+
+    document.getElementById('signup').addEventListener('click', async ()=>{
+      const emailInput = document.getElementById('email').value.trim();
+      const pw = document.getElementById('password').value;
+      if (!emailInput || !pw) return alert('email & password required');
+      try {
+        const res = await auth.createUserWithEmailAndPassword(emailInput, pw);
+        const idToken = await res.user.getIdToken();
+        const role = selectedRole();
+        const userEmail = (res.user && res.user.email) ? res.user.email : emailInput;
+        localStorage.setItem('onboardx_user', JSON.stringify({ uid: res.user.uid, role, email: userEmail }));
+        try { await db.collection('users').doc(res.user.uid).set({ email: userEmail, role, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e){ console.warn('Firestore write failed', e); }
+        try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
+        if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
+      } catch (e) { alert('Signup failed: '+e.message); }
+    });
+
+    document.getElementById('signin').addEventListener('click', async ()=>{
+      const emailInput = document.getElementById('email').value.trim();
+      const pw = document.getElementById('password').value;
+      if (!emailInput || !pw) return alert('email & password required');
+      try {
+        const res = await auth.signInWithEmailAndPassword(emailInput, pw);
+        const idToken = await res.user.getIdToken();
+        const role = selectedRole();
+        const userEmail = (res.user && res.user.email) ? res.user.email : emailInput;
+        localStorage.setItem('onboardx_user', JSON.stringify({ uid: res.user.uid, role, email: userEmail }));
+        try { await db.collection('users').doc(res.user.uid).set({ email: userEmail, role, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e){ console.warn('Firestore write failed', e); }
+        try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
+        if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
+      } catch (e) { alert('Signin failed: '+e.message); }
+    });
+  </script>
+</body>
+</html>

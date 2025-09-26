@@ -1,5 +1,5 @@
-// load .env first
-require('dotenv').config();
+// load .env first (explicitly from this script's directory so starting node from repo root still works)
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -39,26 +39,60 @@ ensureKeys();
 // Simple in-memory contract registry for demo
 const contracts = {};
 
-// Create a sample contract at startup
-const SAMPLE_PDF_PATH = path.join(__dirname, 'public', 'sample-contract.pdf');
-if (!fs.existsSync(SAMPLE_PDF_PATH)) {
-  // create a tiny PDF using pdf-lib
-  (async () => {
-    const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]);
-    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    page.drawText('Sample Contract\n\nPlease review and sign below.', { x: 50, y: 750, size: 14, font: helvetica, color: rgb(0,0,0) });
-    const pdfBytes = await pdfDoc.save();
-    fs.writeFileSync(SAMPLE_PDF_PATH, pdfBytes);
-  })();
-}
-
-// Register sample contract
-const SAMPLE_ID = 'contract-' + nanoid(6);
-contracts[SAMPLE_ID] = { id: SAMPLE_ID, file: 'sample-contract.pdf', status: 'unsigned', createdAt: new Date().toISOString() };
+// No sample contract at startup. Contracts are created by vendor uploads.
 
 app.get('/api/contracts', (req, res) => {
   res.json(Object.values(contracts));
+});
+
+// Vendor uploads a contract and assigns to a distributor email. Upload to Dropbox vendor_data/<vendorId>/
+const upload = multer();
+app.post('/api/vendor/upload', upload.single('file'), async (req, res) => {
+  try {
+    const vendorId = req.body.vendorId || req.body.vendorEmail || 'vendor';
+    const distributorEmail = req.body.distributorEmail;
+    if (!distributorEmail) return res.status(400).json({ error: 'distributorEmail required' });
+    if (!req.file) return res.status(400).json({ error: 'file required' });
+
+    const id = 'contract-' + nanoid(6);
+  const originalName = req.file.originalname || `${id}.pdf`;
+  // store the file in Dropbox using the contract id as the filename at the Dropbox root
+  // (so all uploaded contracts live in a single, unique namespace)
+  const dropFilename = `${id}.pdf`;
+  const dropPath = `/${dropFilename}`;
+
+    if (!process.env.DROPBOX_TOKEN) {
+      // fallback: save locally under public/uploads
+      const uploadsDir = path.join(__dirname, 'public', 'uploads');
+      if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+      const outPath = path.join(uploadsDir, `${id}.pdf`);
+      fs.writeFileSync(outPath, req.file.buffer);
+      contracts[id] = { id, file: `uploads/${id}.pdf`, status: 'uploaded', createdAt: new Date().toISOString(), vendorId, assignedToEmail: distributorEmail, originalName };
+      return res.json({ ok: true, id, file: contracts[id].file });
+    }
+
+    // upload to Dropbox
+    const { Dropbox } = require('dropbox');
+    const fetch = require('node-fetch');
+    const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+    await dbx.filesUpload({ path: dropPath, contents: req.file.buffer, mode: { '.tag': 'overwrite' } });
+
+    // create shared link
+    let link;
+    try {
+      const resLink = await dbx.sharingCreateSharedLinkWithSettings({ path: dropPath });
+      link = resLink.result.url.replace('?dl=0', '?dl=1');
+    } catch (e) {
+      const list = await dbx.sharingListSharedLinks({ path: dropPath, direct_only: true });
+      if (list.result && list.result.links && list.result.links.length) link = list.result.links[0].url.replace('?dl=0', '?dl=1');
+    }
+
+    contracts[id] = { id, file: dropPath, status: 'uploaded', createdAt: new Date().toISOString(), vendorId, assignedToEmail: distributorEmail, originalName, storageUrl: link };
+    return res.json({ ok: true, id, storageUrl: link });
+  } catch (e) {
+    console.error('vendor upload failed', e && e.message);
+    return res.status(500).json({ error: 'upload failed', detail: (e && e.message) || String(e) });
+  }
 });
 
 app.get('/api/contract/:id', (req, res) => {
@@ -67,10 +101,179 @@ app.get('/api/contract/:id', (req, res) => {
   res.json(c);
 });
 
-app.get('/contract/:id/pdf', (req, res) => {
+app.get('/contract/:id/pdf', async (req, res) => {
   const c = contracts[req.params.id];
   if (!c) return res.status(404).send('Not found');
-  const p = path.join(__dirname, 'public', c.file);
+
+  // If we have a storageUrl (Dropbox shared link or other), fetch it server-side and stream bytes
+  if (c.storageUrl) {
+    try {
+      // If this is a Dropbox shared link and we have a token, use the Dropbox API to fetch the file
+      if (process.env.DROPBOX_TOKEN && c.storageUrl.indexOf('dropbox.com') !== -1) {
+        try {
+          const { Dropbox } = require('dropbox');
+          const fetch = require('node-fetch');
+          const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+
+          // Dropbox SDK: download the file via the shared link (works for /scl/ and other shared link types)
+          const sharedRes = await dbx.sharingGetSharedLinkFile({ url: c.storageUrl });
+          // sharedRes.result.fileBinary may contain the bytes
+          const fileBinary = (sharedRes && sharedRes.result && (sharedRes.result.fileBinary || sharedRes.fileBinary)) || null;
+          if (fileBinary) {
+            res.setHeader('Content-Type', 'application/pdf');
+            return res.send(Buffer.from(fileBinary, 'binary'));
+          }
+
+          // If SDK didn't provide fileBinary, try to get a temporary link via filesGetTemporaryLink by resolving shared link metadata
+          // Attempt to derive a path from shared link metadata
+          try {
+            const meta = await dbx.sharingGetSharedLinkMetadata({ url: c.storageUrl });
+            if (meta && meta.result && meta.result.path_lower) {
+              const path = meta.result.path_lower;
+              const tmp = await dbx.filesGetTemporaryLink({ path });
+              const url = tmp && tmp.result && tmp.result.link;
+              if (url) {
+                const resp = await fetch(url);
+                if (!resp.ok) return res.status(502).send('Failed to fetch Dropbox temp link');
+                res.status(resp.status);
+                try { resp.headers.forEach((val, key) => { const k = key.toLowerCase(); if (k === 'content-encoding') return; if (k === 'content-type' || k === 'content-length' || k === 'content-disposition' || k === 'accept-ranges') { res.setHeader(key, val); } }); } catch (e) {}
+                const body = resp.body;
+                if (body && typeof body.pipe === 'function') return body.pipe(res);
+                const arrayBuffer = await resp.arrayBuffer();
+                return res.send(Buffer.from(arrayBuffer));
+              }
+            }
+          } catch (e) {
+            // ignore and fall back to generic fetch below
+          }
+        } catch (e) {
+          console.error('Dropbox API shared-link fetch failed', e && e.message);
+          // fall back to generic fetch
+        }
+      }
+
+      // Generic fetch fallback for non-dropbox links or when token not available
+      const fetch = require('node-fetch');
+      // ensure dl=1 for Dropbox links to get raw content
+      let url = c.storageUrl;
+      if (url.indexOf('dropbox.com') !== -1 && url.indexOf('dl=1') === -1) {
+        url = url.replace('?dl=0', '?dl=1');
+      }
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        console.error('Failed to fetch storageUrl', resp.status, resp.statusText);
+        return res.status(502).send('Failed to fetch remote file');
+      }
+      // forward status and headers where appropriate, but avoid passing along content-encoding
+      res.status(resp.status);
+      try {
+        resp.headers.forEach((val, key) => {
+          const k = key.toLowerCase();
+          if (k === 'content-encoding') return; // let express handle encoding
+          // overwrite content-type to application/pdf if missing
+          if (k === 'content-type' || k === 'content-length' || k === 'content-disposition' || k === 'accept-ranges') {
+            res.setHeader(key, val);
+          }
+        });
+      } catch (e) {
+        // some fetch implementations expose headers differently; ignore on failure
+      }
+      // stream the remote response body directly to the client
+      const body = resp.body;
+      if (body && typeof body.pipe === 'function') {
+        return body.pipe(res);
+      }
+      // fallback: buffer and send
+      const arrayBuffer = await resp.arrayBuffer();
+      return res.send(Buffer.from(arrayBuffer));
+    } catch (e) {
+      console.error('Proxy fetch failed', e);
+      return res.status(500).send('Failed to proxy remote file');
+    }
+  }
+
+  // If the stored file path looks like a Dropbox root path (e.g. '/contract-xxxx.pdf') and we have a token,
+  // use the Dropbox API to download or get a temporary link so we avoid relying on a public shared link.
+  if (process.env.DROPBOX_TOKEN && typeof c.file === 'string' && c.file.startsWith('/')) {
+    try {
+      const { Dropbox } = require('dropbox');
+      const fetch = require('node-fetch');
+      const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+
+      // Try filesDownload (may return fileBinary in the response). If that doesn't provide raw bytes,
+      // fall back to filesGetTemporaryLink and fetch the temporary URL.
+      try {
+        const dl = await dbx.filesDownload({ path: c.file });
+        const fileBinary = (dl && dl.result && dl.result.fileBinary) || dl.fileBinary || null;
+        if (fileBinary) {
+          res.setHeader('Content-Type', 'application/pdf');
+          return res.send(Buffer.from(fileBinary, 'binary'));
+        }
+      } catch (err) {
+        // ignore and try temporary link
+      }
+
+      // Use temporary link as fallback
+      const tmp = await dbx.filesGetTemporaryLink({ path: c.file });
+      const url = tmp && tmp.result && tmp.result.link;
+      if (!url) return res.status(502).send('Failed to get Dropbox temporary link');
+      const resp = await fetch(url);
+      if (!resp.ok) return res.status(502).send('Failed to fetch Dropbox temp link');
+      res.status(resp.status);
+      try {
+        resp.headers.forEach((val, key) => {
+          const k = key.toLowerCase();
+          if (k === 'content-encoding') return;
+          if (k === 'content-type' || k === 'content-length' || k === 'content-disposition' || k === 'accept-ranges') {
+            res.setHeader(key, val);
+          }
+        });
+      } catch (e) {}
+      const body = resp.body;
+      if (body && typeof body.pipe === 'function') return body.pipe(res);
+      const arrayBuffer = await resp.arrayBuffer();
+      return res.send(Buffer.from(arrayBuffer));
+    } catch (e) {
+      console.error('Dropbox API fetch failed', e && e.message);
+      // fall through to the other handlers (http url or local file)
+    }
+  }
+
+  // If the file field is an absolute http(s) URL, fetch it and proxy
+  if (/^https?:\/\//i.test(c.file)) {
+    try {
+      const fetch = require('node-fetch');
+      const resp = await fetch(c.file);
+      if (!resp.ok) return res.status(502).send('Failed to fetch remote file');
+      res.status(resp.status);
+      try {
+        resp.headers.forEach((val, key) => {
+          const k = key.toLowerCase();
+          if (k === 'content-encoding') return;
+          if (k === 'content-type' || k === 'content-length' || k === 'content-disposition' || k === 'accept-ranges') {
+            res.setHeader(key, val);
+          }
+        });
+      } catch (e) {}
+      const body = resp.body;
+      if (body && typeof body.pipe === 'function') {
+        return body.pipe(res);
+      }
+      const arrayBuffer = await resp.arrayBuffer();
+      return res.send(Buffer.from(arrayBuffer));
+    } catch (e) {
+      console.error('Proxy fetch failed', e);
+      return res.status(500).send('Failed to proxy remote file');
+    }
+  }
+
+  // Otherwise serve local file from public/, but ensure it exists
+  const safePath = path.normalize(c.file).replace(/^\/+/, ''); // remove leading slashes
+  const p = path.join(__dirname, 'public', safePath);
+  if (!fs.existsSync(p)) {
+    console.error('Contract file not found:', p);
+    return res.status(404).send('Contract file not found');
+  }
   res.sendFile(p);
 });
 
@@ -82,9 +285,103 @@ app.post('/api/sign', async (req, res) => {
     const c = contracts[contractId];
     if (!c) return res.status(404).json({ error: 'Contract not found' });
 
-    // load PDF
-    const pdfPath = path.join(__dirname, 'public', c.file);
-    const pdfBytes = fs.readFileSync(pdfPath);
+    // load PDF: support storageUrl or remote URL, otherwise local file
+    let pdfBytes;
+    // If the contract has a storageUrl and it's a Dropbox shared link, use the Dropbox API to fetch the file
+    if (c.storageUrl && c.storageUrl.indexOf('dropbox.com') !== -1 && process.env.DROPBOX_TOKEN) {
+      try {
+        const { Dropbox } = require('dropbox');
+        const fetch = require('node-fetch');
+        const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+        // Try to download via shared link API
+        try {
+          const sharedRes = await dbx.sharingGetSharedLinkFile({ url: c.storageUrl });
+          const fileBinary = (sharedRes && sharedRes.result && (sharedRes.result.fileBinary || sharedRes.fileBinary)) || null;
+          if (fileBinary) {
+            pdfBytes = Buffer.from(fileBinary, 'binary');
+          }
+        } catch (e) {
+          // ignore and fall through to tmp link
+        }
+        // If we still don't have bytes, try to resolve metadata -> temporary link
+        if (!pdfBytes) {
+          try {
+            const meta = await dbx.sharingGetSharedLinkMetadata({ url: c.storageUrl });
+            if (meta && meta.result && meta.result.path_lower) {
+              const p = meta.result.path_lower;
+              const tmp = await dbx.filesGetTemporaryLink({ path: p });
+              const url = tmp && tmp.result && tmp.result.link;
+              if (url) {
+                const resp = await fetch(url);
+                if (!resp.ok) return res.status(502).json({ error: 'Failed to fetch remote PDF for signing' });
+                const arrayBuffer = await resp.arrayBuffer();
+                pdfBytes = Buffer.from(arrayBuffer);
+              }
+            }
+          } catch (e) {
+            // fall through to generic fetch
+          }
+        }
+      } catch (e) {
+        console.error('Dropbox fetch for signing failed', e && e.message);
+      }
+    }
+
+    // If c.file looks like a Dropbox root path and we have a token, fetch it via filesDownload or tmp link
+    if (!pdfBytes && process.env.DROPBOX_TOKEN && typeof c.file === 'string' && c.file.startsWith('/')) {
+      try {
+        const { Dropbox } = require('dropbox');
+        const fetch = require('node-fetch');
+        const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+        try {
+          const dl = await dbx.filesDownload({ path: c.file });
+          const fileBinary = (dl && dl.result && dl.result.fileBinary) || dl.fileBinary || null;
+          if (fileBinary) pdfBytes = Buffer.from(fileBinary, 'binary');
+        } catch (e) {
+          // try temporary link fallback
+          try {
+            const tmp = await dbx.filesGetTemporaryLink({ path: c.file });
+            const url = tmp && tmp.result && tmp.result.link;
+            if (url) {
+              const resp = await (require('node-fetch'))(url);
+              if (!resp.ok) return res.status(502).json({ error: 'Failed to fetch remote PDF for signing' });
+              const arrayBuffer = await resp.arrayBuffer();
+              pdfBytes = Buffer.from(arrayBuffer);
+            }
+          } catch (e2) {
+            // ignore
+          }
+        }
+      } catch (e) {
+        console.error('Dropbox filesDownload for signing failed', e && e.message);
+      }
+    }
+
+    // If still not set, fall back to generic URL fetch
+    if (!pdfBytes && c.storageUrl && /^https?:\/\//i.test(c.storageUrl)) {
+      const fetch = require('node-fetch');
+      const url = c.storageUrl.indexOf('dropbox.com') !== -1 ? c.storageUrl.replace('?dl=0', '?dl=1') : c.storageUrl;
+      const resp = await fetch(url);
+      if (!resp.ok) return res.status(502).json({ error: 'Failed to fetch remote PDF for signing' });
+      const arrayBuffer = await resp.arrayBuffer();
+      pdfBytes = Buffer.from(arrayBuffer);
+    }
+
+    // generic remote file
+    if (!pdfBytes && /^https?:\/\//i.test(c.file)) {
+      const fetch = require('node-fetch');
+      const resp = await fetch(c.file);
+      if (!resp.ok) return res.status(502).json({ error: 'Failed to fetch remote PDF for signing' });
+      const arrayBuffer = await resp.arrayBuffer();
+      pdfBytes = Buffer.from(arrayBuffer);
+    }
+
+    // local file fallback
+    if (!pdfBytes) {
+      const pdfPath = path.join(__dirname, 'public', c.file);
+      if (!fs.existsSync(pdfPath)) return res.status(404).json({ error: 'Local PDF not found for signing' });
+      pdfBytes = fs.readFileSync(pdfPath);
+    }
     const pdfDoc = await PDFDocument.load(pdfBytes);
 
     // embed signature image
@@ -122,53 +419,42 @@ app.post('/api/sign', async (req, res) => {
       ecdsaSignature: signature
     };
 
-    // Force direct upload to Dropbox (no local storage). If Dropbox is not configured, return error.
-    const storageProvider = (process.env.STORAGE_PROVIDER || '').toLowerCase();
-    if (storageProvider !== 'dropbox' || !process.env.DROPBOX_TOKEN) {
-      console.error('Dropbox not configured. To avoid local storage set STORAGE_PROVIDER=dropbox and DROPBOX_TOKEN.');
-      return res.status(500).json({ error: 'Storage provider not configured. Set STORAGE_PROVIDER=dropbox and provide DROPBOX_TOKEN to enable cloud storage (no local storage).' });
-    }
-
+    // Upload signed PDF to Dropbox if configured, otherwise save locally under DATA_DIR
     try {
-      const { Dropbox } = require('dropbox');
-      const fetch = require('node-fetch');
-      const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
-      const dropPath = '/' + outName;
-      // upload file directly to Dropbox
-      await dbx.filesUpload({ path: dropPath, contents: signedPdfBytes, mode: { '.tag': 'overwrite' } });
-      // try to create or get a shared link
-      let link;
-      try {
-        const resLink = await dbx.sharingCreateSharedLinkWithSettings({ path: dropPath });
-        link = resLink.result.url.replace('?dl=0', '?dl=1');
-      } catch (e) {
-        const list = await dbx.sharingListSharedLinks({ path: dropPath, direct_only: true });
-        if (list.result && list.result.links && list.result.links.length) {
-          link = list.result.links[0].url.replace('?dl=0', '?dl=1');
+      if (process.env.DROPBOX_TOKEN) {
+        const { Dropbox } = require('dropbox');
+        const fetch = require('node-fetch');
+        const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+        const dropPath = '/' + outName;
+        await dbx.filesUpload({ path: dropPath, contents: signedPdfBytes, mode: { '.tag': 'overwrite' } });
+        // try to create or get a shared link
+        try {
+          const resLink = await dbx.sharingCreateSharedLinkWithSettings({ path: dropPath });
+          metadata.storageUrl = resLink.result.url.replace('?dl=0', '?dl=1');
+        } catch (e) {
+          const list = await dbx.sharingListSharedLinks({ path: dropPath, direct_only: true });
+          if (list.result && list.result.links && list.result.links.length) metadata.storageUrl = list.result.links[0].url.replace('?dl=0', '?dl=1');
         }
+      } else {
+        // save locally to DATA_DIR and expose via /signed/:name
+        const outPath = path.join(DATA_DIR, outName);
+        fs.writeFileSync(outPath, signedPdfBytes);
+        metadata.storageUrl = `${req.protocol}://${req.get('host')}/signed/${outName}`;
+        console.log('DROPBOX_TOKEN not set; saved signed PDF locally at', outPath);
       }
-      if (link) metadata.storageUrl = link;
 
-      // update registry in-memory (no files written locally)
+      // update registry in-memory
       c.status = 'signed';
       c.signedAt = metadata.signedAt;
       c.signedFile = outName;
       c.storageUrl = metadata.storageUrl || null;
 
-      // return metadata to client
+      // In real app: notify vendor dashboard via websocket or push. Here we just return metadata.
       return res.json({ ok: true, metadata });
     } catch (e) {
-      console.error('Dropbox upload failed:', e.message || e);
-      return res.status(500).json({ error: 'Dropbox upload failed', detail: (e && e.message) || String(e) });
+      console.error('Signed file storage failed:', e && e.message);
+      return res.status(500).json({ error: 'Signed file storage failed', detail: (e && e.message) || String(e) });
     }
-
-    // update registry
-    c.status = 'signed';
-    c.signedAt = metadata.signedAt;
-    c.signedFile = outName;
-
-    // In real app: notify vendor dashboard via websocket or push. Here we just return metadata.
-    res.json({ ok: true, metadata });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal error', detail: err.message });
@@ -181,10 +467,43 @@ app.get('/signed/:name', (req, res) => {
   res.sendFile(p);
 });
 
+// POST /api/sync-signed { name: "contract-...-signed-...pdf" }
+app.post('/api/sync-signed', express.json(), async (req, res) => {
+  const { name } = req.body || {};
+  if (!name) return res.status(400).json({ error: 'name required' });
+  const p = path.join(DATA_DIR, name);
+  if (!fs.existsSync(p)) return res.status(404).json({ error: 'file not found' });
+  if (!process.env.DROPBOX_TOKEN) return res.status(400).json({ error: 'DROPBOX_TOKEN not configured on server' });
+  try {
+    const { Dropbox } = require('dropbox');
+    const fetch = require('node-fetch');
+    const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+    const dropPath = '/' + name;
+    const contents = fs.readFileSync(p);
+    await dbx.filesUpload({ path: dropPath, contents, mode: { '.tag': 'overwrite' } });
+    let link;
+    try {
+      const resLink = await dbx.sharingCreateSharedLinkWithSettings({ path: dropPath });
+      link = resLink.result.url.replace('?dl=0', '?dl=1');
+    } catch (e) {
+      const list = await dbx.sharingListSharedLinks({ path: dropPath, direct_only: true });
+      if (list.result && list.result.links && list.result.links.length) link = list.result.links[0].url.replace('?dl=0', '?dl=1');
+    }
+    return res.json({ ok: true, storageUrl: link });
+  } catch (e) {
+    console.error('sync-signed failed', e && e.message);
+    return res.status(500).json({ error: 'sync failed', detail: (e && e.message) || String(e) });
+  }
+});
+
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Sample contract id: ${SAMPLE_ID}`);
+    if (process.env.DROPBOX_TOKEN) {
+      console.log('DROPBOX_TOKEN is set — Dropbox uploads enabled');
+    } else {
+      console.log('DROPBOX_TOKEN not set — signed PDFs will be saved locally');
+    }
   });
 }
 
