@@ -1,0 +1,470 @@
+
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+1 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+CONTRACT POLICIES  
+ 
+AND  
+ 
+P
+ROCEDURES MANUAL 
+ 
+ 
+REVISED JULY 2013 
+ 
+ 
+ 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+2 
+ 
+ 
+ 
+ 
+ 
+Table of Contents 
+ 
+ 
+Section 1: Definitions ..................................................................................................................... 3
+ 
+Section 2: General Process.............................................................................................................. 7 
+Section 3: Professional Service Agreement (PSA) ......................................................................... 8 
+Section 4: Professional Service Agreements (PSA) ....................................................................... 9 
+Section 5: Miscellaneous Contracts .............................................................................................. 10 
+Section 6: No Cost Extensions ...................................................................................................... 10 
+Section 7: Waivers of Competition ............................................................................................... 11 
+Section 8: Exemptions .................................................................................................................. 11 
+ 
+  
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+3 
+ 
+Section 1: Definitions 
+ 
+Pitt Community College is not required by law to submit requests to the Division of Purchase 
+and Contract for approval related to printing and/or services. 
+1
+ 
+ 
+The exemption only applies to seeking approval from the Division of Purchase and Contract. It 
+does not exempt PCC from seeking competition. 
+ 
+This Manual defines types of contractual services and outlines procedures to be followed by PCC 
+employees for procuring these services. The definitions below are intended to provide PCC 
+employees a common vocabulary to use in relation to contracts. These definitions are applicable 
+to PCC; note that other agencies/colleges may use slightly different terminology. 
+ 
+Contract – An agreement between two or more parties that creates an obligation to perform (or 
+not perform) a particular action. It is an agreement enforceable by law. In addition to creating 
+obligations by and to external parties (vendors), a written contract is a record that serves as an 
+internal check and balance permitting reviews of procurement activity for improper relationships, 
+fraud, conflict of interest issues, and regulatory requirements.  
+ 
+A legally enforceable written contract requires:  
+1. An Offer (specific material/service, specifications and deliverables)  
+2. An Acceptance  
+3. Consideration (the value received and given)  
+4. Execution by competent parties with the authority to bind the company  
+ 
+Contract Formation - Contract formation is a series of pre-award procurement activities 
+between an agency and a contractor that results in a contract. Other terms interchangeable are 
+pre-solicitation and contract development phase. The contract formation activities serve as the 
+preamble to these internal activities that will follow once the contract is executed. 
+ 
+The procurement department offers a value to the contract formation or pre-award process. It is 
+important that they play a hands-on role in the entire contract formation process. During this 
+process, the procurement department can assist in developing specific contract goals and provide 
+the internal customer (end user) with contract formation tools such as specifications, price, 
+delivery types, selection and evaluation criteria, contract templates, forms, and general types of 
+contracts that contain contract clauses designed to effectively minimize and manage contract 
+risks. 
+ 
+Scope of Work, Intent of Contract, Duration, etc – The awarded supplier will receive either a 
+signed contract or a purchase order (or both) from the state entity. The purchase order and/or 
+signed contract will include the terms, conditions and specifications governing the supplier’s 
+contract performance. No supplier is authorized to begin contract performance prior to receiving 
+a signed contract or purchase order from the state entity. Any required bonds (payment, 
+performance, fidelity, insurance certification, etc.) or letters of credit must also be promptly 
+submitted to the state entity in accordance with the terms of the contract. 
+ 
+                                                 
+1
+ NC Agency Purchasing Manual, June 2008 page 7 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+4 
+ 
+The supplier’s receipt of a purchase order from PCC for a one-time purchase, a lease or 
+installment purchase, or a fixed quantity contract, authorizes shipment in accordance with its 
+terms. The supplier’s receipt of a Notice of Award from PCC establishing a term contract does 
+not authorize any shipment. Shipment against term contracts is only authorized by the supplier’s 
+receipt of a purchase order from PCC. The purchase order number or contract number must be 
+shown on all bills of lading, packing slips, back orders, invoices, and other transactional 
+documents. Any shipments made before the issuance/receipt of a purchase order, are made at the 
+supplier’s sole risk. 
+ 
+Contract Administrator -  The PCC employee who develops the Scope of Work and works with 
+the contractor to ensure that the deliverables are met and the contractor is adhering to the 
+timetable.  The Contract Administrator is the point person for the contractor and the Director of 
+Purchasing. 
+ 
+Primary responsibilities of the Contract Administrator include, but are not limited to: 
+ 
+1. Understanding the contract terms and conditions including the scope and performance 
+indicators. 
+2. Managing any changes to the contract (change orders, amendments, addendums, renewals, 
+extensions, terminations, etc.). 
+3. Monitoring the contractor’s progress and performance to ensure goods and services 
+conform to the contract requirements. 
+4. Receiving and responding to communications between PCC and the contractor. 
+Coordinating and scheduling meetings, if needed.  
+5. Participating in resolving disputes in a timely manner. 
+6. Exercising contractual remedies, as appropriate, when a contractor’s performance is 
+deficient. 
+7. Ensuring contractor’s performance evaluation form is completed and filed appropriately. If 
+the value of the contract is greater than $10,000, then a copy must be submitted to P&C for 
+inclusion in a centralized repository. Monitoring invoice payment reports from accounting 
+for timeliness and accuracy. 
+8. Documenting all actions taken regarding the contract and maintain such documentation as 
+part of the official contract file. 
+9. Closing out the contract file. 
+ 
+The Contract Administrator shall avoid the following: 
+ 
+1. Asking the contractor (inappropriately or unknowingly) to perform outside of the scope of 
+work specified in the contract without adequate documents agreed to by both parties. 
+2. Awarding, agreeing to, modifying, increasing the scope and dollar value of, or signing any 
+contract directing change without adequate documents agreed to by both parties. 
+3. Issuing instructions to a contractor to start or stop work except in an emergency situation 
+without adequate written documents. 
+4. Including personal opinions, in any correspondence, including emails. 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+5 
+ 
+Examples of things to avoid include, but are not limited to: 
+1. Making commitments or promises (oral or written) to any contractor. 
+2. Authorizing delivery or disposition of governmental-furnished property. 
+3. Obligating PCC beyond the terms and conditions of the contract. 
+4. Approving items of cost not authorized by the contract. 
+5. Granting deviations from or waiving any of the terms and conditions of the contract. 
+6. Changing the period of performance. 
+7. Authorizing subcontracting or the use of consultants. 
+8. Authorizing the use of overtime. 
+ 
+Contract Renewal – For the purpose of PCC procedures, a contract renewal is the additional out 
+years of a multi-year contract. In those out years, there is no contract to sign. 
+ 
+Multi-Year Contract – A contract for service that includes an option to renew for additional 
+years beyond the first year. 
+ 
+Professional Service Agreement (PSA) – A type of contract used to procure services provided 
+by a professional individual (person) on a temporary or occasional basis, including (by way of 
+illustration, not limitation) those provided by an evaluator, an educator, or a speaker.  A PSA can 
+also be used to procure services provided by a company, an organization, a community college, 
+another State agency, requiring specialized knowledge, experience, expertise, or similar 
+capabilities. The services may include (by way of illustration, not limitation) services such as, 
+presenting a workshop, employee training, or development of promotional materials. If the 
+service is primarily for review or analysis of PCC programs and/or projects, the policies and 
+procedures for Consultant Services shall be applicable. (See definition of “Consultant”) 
+ 
+Consultant – For the purposes of PCC procedures, a consultant is defined as an individual, 
+company, or an employee of another company or State agency who reviews or analyzes PCC 
+programs and provides counsel.  This includes, but is not limited to, the organization, planning, 
+directing, evaluation, and operation of the divisions and programs within PCC.   
+ 
+Deliverable – A service which PCC is requesting the contractor to provide. 
+ 
+Foreign National - An individual who is not a citizen of the United States and does not pay 
+income taxes in the U.S.  These persons are in the U.S. with visas. 
+ 
+Purchase Order (PO) – A document describing goods or services, quantities and agreed prices 
+for said goods or services the seller will provide to the buyer. Sending a PO to a supplier 
+constitutes a legal offer to buy products or services and encumbers the available funds.  
+ 
+Request for Proposal (RFP) – A formal, written solicitation document used to solicit 
+competition and obtaining offers for services. The value must exceed $10,000,000 to use an RFP.  
+ 
+ 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+6 
+ 
+Waiver of Competition – P&C has determined that there are instances when colleges/agencies 
+can request not to seek competitive bids for services.  If any of the conditions listed in Section 7 
+“Waiver of Competition” of this manual apply, then a justification must be written citing the 
+condition to waive the bidding process. 
+ 
+ 
+ 
+Summary of Abbreviations 
+ 
+ABBREVIATIONS MEANING 
+CA Contract Administrator 
+DP Director of Purchasing 
+IPS Interactive Purchasing System 
+IT Procurement Information Technology Procurement( a division within the 
+Governor’s Office) 
+PCC Pitt Community College 
+PO Purchase Order 
+PSA Professional Service Agreement 
+P&C Purchase and Contract 
+RFP Request for Proposal 
+  
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+7 
+ 
+Section 2: General Process 
+ 
+I. Obtain preliminary approval from Assistant Vice President/Dean/Vice President. 
+A PCC employee must receive preliminary approval from his/her Asst. Vice President/Dean/ 
+Vice President and certify that funds are available before developing any type of contract. 
+Each division shall develop its own process for seeking approval from within the division 
+and obtaining certification of funds availability.   
+ 
+II. Determine the appropriate vehicle for procuring the service.
+ 
+A PCC employee must determine the appropriate vehicle for obtaining the desired service. 
+ 
+TEMPORARY EMPLOYEE vs. PROFESSIONAL SERVICE AGREEMENT 
+ 
+III. Prepare the contract and obtain necessary approvals. 
+Where programmatically appropriate, the use of multi-year contracts is encouraged to 
+promote cost savings (Ex.one year plus four additional one year periods).   The initial year 
+and each subsequent year of a multi-year contract should end on or before June 30
+th
+.  One-
+year contracts should also end on or before June 30
+th
+. 
+ 
+The template can be found on the PCC Purchasing Department website,
+ along with the 
+General Terms and Conditions. 
+http://www.pittcc.edu/experience-pcc/administrative-departments/purchasing/documents.html 
+ 
+It is the responsibility of the CA to assure that the contractor is performing the services in an 
+acceptable and timely manner.  The CA must also sign off on all invoices.  His or her 
+signature denotes that the service for which PCC has been billed is acceptable and in line 
+with the terms of the contract and, therefore, the invoice should be paid. 
+ 
+Contracts cannot be divided to keep them under the delegations set herein in order to avoid 
+the rules requiring competition. 
+ 
+ 
+ 
+TEMPORARY EMPLOYEE PROFESSIONAL SERVICE AGREEMENT 
+The work (the means and methods of accomplishing a 
+task) is controlled and directed by a staff member. 
+Only the result is controlled or directed by a staff 
+member – the contractor works independently.  
+Agency typically provides place to work. Individual works off site. 
+Agency typically provides furniture/equipment. Individual provides own furniture/equipment. 
+Agency can discharge individual. Specific justification for termination is part of the 
+contract and usually requires written notice a minimum 
+of 30 days in advance. 
+ There are specific deliverables that must be defined and 
+fulfilled to issue payment. 
+ 
+ 
+A service that is required/needed by PCC 
+ The PCC program staff defines tasks (deliverables) to be 
+performed.  
+ PCC must follow purchasing policies and procedures.  
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+8 
+ 
+Inquire of the individual if he/she is a foreign national or a retired or current State employee. 
+If so, contact the DP before proceeding with the steps below.  If the intended contractor is a 
+foreign national, there is additional information that must be collected for tax purposes. Per 
+G.S. 135-1(20), retirees subject to the North Carolina Teachers & State Employees’ 
+Retirement System who retire on or after November 1, 2005, must render no service at any 
+time during the six months immediately following the effective date of retirement. 
+Consequently, the individual cannot enter into any professional service agreement during the 
+six months immediately following the effective date of retirement without jeopardizing 
+his/her retirement benefits. Retired State employees must sign a certification that they have 
+been retired for at least six months. 
+ 
+IV. Verify the contractor is registered with the NC E-Procurement System. If not, provide them 
+the following link to register. If the contractor has concerns or questions, the CA will need to 
+consult with the DP. (Registration must be completed prior to the PSA being finalized 
+and signed). 
+ 
+http://eprocurement.nc.gov/Vendor.html
+ 
+ 
+Section 3:  Professional Service Agreement (PSA) 
+ 
+When entering into an agreement with a vendor that is neither a community college nor a 
+governmental entity, the amount of the agreement determines which process to follow.  
+ 
+$4,999 and Less: 
+ 
+1) Contact the individual (contractor) in writing and discuss the scope of work along with the 
+terms of the contract.  Provide the individual (contractor) a copy of the General Terms and 
+Conditions for them to review (t hey are attached to the Professional Service Agreement 
+Template).   If the contractor has concerns or questions regarding the General Terms and 
+Conditions, the CA may need to consult with the DP.  
+ 
+2) Complete the PSA.   
+ 
+3) Print out two copies of the PSA. 
+ 
+4) Obtain internal signatures.   
+ 
+5) The CA should mail both copies of the PSA to the contractor for signature. Once the 
+contractor has returned both signed copies, the CA will prepare and submit an e-procurement 
+requisition and attach a copy of the signed PSA to the requisition.  The CA should keep one 
+copy of the PSA for his/her file. The second signed PSA should be held until the services 
+have been completed and the contractor has submitted an invoice. Then submit both the PSA 
+and invoice to accounts payable for payment. 
+ 
+ 
+ 
+ 
+ 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+9 
+ 
+Over $5,000– Non IT or IT-Related 
+ 
+1) Prepare a Scope of Work for the services and desired results being sought and submit to 
+the DP, along with the desired vendor. The DP will determine whether the competition 
+must be solicited or the agreement qualifies for one of the “Waiver of Competition” 
+provisions (Section 7).    
+ 
+2) If the DP determines a wavier can be justified, follow steps 2-5 under “$4,999 and Less” 
+section.  
+ 
+3) If the DP determines that a waiver of competition is not justified, then he/she will notify 
+the CA that an RFP will need to be prepared.  An email must be sent to the DP f rom the 
+Asst. Vice President/Dean/Vice President authorizing the project. 
+ 
+4) Once the RFP is prepared, it will be posted electronically to the Interactive Purchasing 
+System (IPS) by the DP.  Notification of posting will be submitted to CA.  Proposals will 
+be received and opened in Purchasing Department for documentation and record keeping.   
+ 
+5) All proposals will be evaluated by the DP, CA and any other selected staff members 
+associated with the Scope of Work.  Once all proposals have been thoroughly evaluated 
+and a recommendation of award has been determined, the DP will send the RFP to the 
+appropriate Asst. Vice President/Dean/Vice President for signature.  Once the RFP has 
+been signed, the CA will prepare and submit an e-procurement requisition and attach a 
+copy of the signed RFP to the requisition. The RFP will act as the PSA. 
+ 
+ 
+Section 4:  Professional Service Agreements (PSA)  
+ NC Community Colleges or Other NC Governmental Agencies 
+ 
+PSA with the North Carolina community colleges, other North Carolina governmental agencies, 
+local governments within North Carolina and Federal agencies, do not require competition. 
+Note: non-profit organizations do not qualify as governmental agencies.  The process for this 
+type of PSA is as follows: 
+ 
+1) Acquire the scope of work (email will suffice) from the agency/community college. 
+  
+2) Complete steps 2-5 under “$4,999 and Less” s ection. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+10 
+ 
+Section 5: Miscellaneous Contracts 
+ 
+Contracts Initiated by Other Entities 
+ 
+On occasion other organizations or companies will send us their contracts, as defined on page 1, 
+for signature.  The procedure is as follows: 
+ 
+1)   A CA is to be identified and preliminary approval must be obtained from the Asst. Vice 
+President/Dean/Vice President. 
+2) Submit the contract electronically (if unavailable, submit hard copy) to the DP for 
+review.  The CA will be contacted if any revisions are needed.  If the revisions change 
+the scope of work or timetable, the CA must notify the contractor of the changes.  
+3) Once revisions have been made, print out two copies of the contract. 
+4) Obtain Signatures. 
+5) The CA should mail both copies of the contract to the contractor (organization or 
+company) for signature. Once the contractor has returned both signed copies, the CA will 
+prepare and submit an e-procurement requisition and attach a copy of the signed PSA to 
+the requisition.  The CA should keep one copy of the PSA for his/her file. The second 
+signed PSA should be held until the services have been completed and the contractor has 
+submitted an invoice. Then submit both the PSA and invoice to accounts payable for 
+payment. 
+ 
+Section 6: No Cost Extensions 
+ 
+When a contractor needs to go beyond the end date on their contract for whatever reason, PCC 
+may choose to issue a no-cost extension.   
+ 
+***The template can be found on the PCC Purchasing Department website*** 
+ 
+http://www.pittcc.edu/experience-pcc/administrative-departments/purchasing/documents.html 
+ 
+The procedure is as follows: 
+ 
+1)  Determine the new end date with the contractor.   
+2) Complete the No Cost Contract Extension form and print out two hard copies.  
+3) The signature lines should be the same as on the original contract.  The CGA will obtain 
+remaining signatures and mail to the contractor for their signature. 
+4) Once the extension has been signed by both parties, the CA should keep one copy for 
+his/her file. 
+ 
+ 
+ 
+ 
+
+                                      CONTRACT POLICES & PROCEDURES MANUAL 
+   
+11 
+ 
+Section 7:  Waivers of Competition 
+ 
+Please use the link below to view the waivers. 
+ 
+http://ncrules.state.nc.us/ncac/title%2001%20-%20administration/chapter%2005%20-
+%20purchase%20and%20contract/subchapter%20b/01%20ncac%2005b%20.1401.html 
+ 
+ 
+Section 8:  Exemptions 
+ 
+Please use the link below to view the exemptions. 
+ 
+http://ncrules.state.nc.us/ncac/title%2001%20-%20administration/chapter%2005%20-
+%20purchase%20and%20contract/subchapter%20b/01%20ncac%2005b%20.1601.html 
+ 
+ 
+  
+ 
+ 

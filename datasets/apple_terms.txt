@@ -1,0 +1,584 @@
+
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+APPLE INC. 
+PURCHASE AGREEMENT 
+PURCHASE ORDER TERMS AND CONDITIONS 
+THIS PURCHASE AGREEMENT (the "Agreement") sets forth the terms and conditions that apply to all purchases 
+of goods and services by Apple from Seller by means of a purchase order (a "PO") issued by Apple to Seller. As used 
+in  this  Agreement, "Seller" means  the  entity  identified  on  the  face  of  a  PO  as  "Seller"  and  its  subsidiaries  and 
+affiliates, and "Apple" means Apple Inc. Seller and Apple hereby agree as follows: 
+1. SERVICES & DELIVERABLES. Seller agrees to perform the services ("Services") and/or provide the software 
+(including  all  updates,  revisions,  error  corrections,  and  subsequent  versions  thereof, "Software"),  materials, 
+equipment, hardware, goods, or deliverables described in a PO (collectively referred to as "Goods"), in accordance 
+with the terms and conditions in this Agreement and the terms and conditions on the face of the PO, which terms are 
+incorporated herein by reference. Upon acceptance of a PO, shipment of Goods or commencement of Services, Seller 
+shall be bound by the provisions of this Agreement, whether Seller acknowledges or otherwise signs this Agreement 
+or the PO, unless Seller objects to such terms in writing prior to shipping Goods or commencing Services. A PO does 
+not constitute a firm offer and may be revoked at any time prior to acceptance. This Agreement may not be added to, 
+modified, superseded, or otherwise altered, except by a writing signed by an authorized Apple representative. Any 
+terms  or  conditions  contained  in  any  acknowledgment,  invoice,  or  other  communication  of  Seller  which  are 
+inconsistent with the terms and conditions of this Agreement, are hereby rejected. To the extent that a PO might be 
+treated as an acceptance of Seller's prior offer, such acceptance is expressly made on condition of assent by Seller to 
+the terms hereof and shipment of the Goods or beginning performance of any Services by Seller shall constitute such 
+assent. Apple hereby reserves the right to reschedule any delivery or cancel any PO issued at any time prior to shipment 
+of the Goods or prior to commencement of any Services. Apple shall not be subject to any charges or other fees as a 
+result of such cancellation. All shrink-wrap, click-wrap, browse-wrap, and similar terms accompanying any Software, 
+and any online terms of use, terms of service, or similar terms relating to Services, are expressly rejected by Apple 
+and are null and void. The terms of this Agreement shall prevail over all other such terms and conditions.  
+2. DELIVERY. Time is of the essence. Delivery of Goods shall be made pursuant to the schedule, via the carrier, and 
+to the place specified on the face of the applicable PO. Apple reserves the right to return, shipping charges collect, all 
+Goods  received  in  advance  of  the  delivery  schedule.  If  no  delivery  schedule  is  specified,  the  order  shall  be  filled 
+promptly and delivery will be made by the most expeditious form of transportation by land or sea. If no carrier is 
+specified in the PO, Seller shall use the least expensive carrier. In the event Seller fails to deliver the Goods within the 
+time specified, Apple may, at its option, decline to accept the Goods and cancel the PO without liability or may demand 
+its  allocable  fair  share  of  Seller's  available  Goods  and  cancel  the  balance  of  the  PO  without  liability.  Seller  shall 
+package all items in suitable containers to permit safe transportation and handling. Each delivered container must be 
+labeled  and  marked  to  identify  contents  without  opening  and all  boxes  and  packages  must  contain  packing sheets 
+listing contents. Apple's PO number must appear on all shipping containers, packing sheets, delivery tickets, and bills 
+of  lading.  Seller  will  clearly  identify  the  country  of  origin  of  all  Goods  delivered  and  will  indemnify  Apple  with 
+respect  to  any  expenses,  duties,  penalties,  damages,  settlements,  costs  or  attorney's  fees  incurred  by  Apple  in 
+connection with Seller's failure to identify or misidentification of the country of origin. 
+3. IDENTIFICATION, RISK OF LOSS, & DESTRUCTION OF GOODS. Identification of the Goods shall occur in 
+accordance with Section 2501 of the California Commercial Code. Seller assumes all risk of loss until title transfers 
+to Apple. Title to the Goods shall pass to Apple upon receipt by it of the Goods at the designated destination; provided, 
+however,  that  if  the  designated  destination  is  a warehouse  operated  by  Seller  or  a  third-party  on  Seller's  behalf  (a 
+"Hub"), even if located on Apple's premises, receipt by Apple shall occur, and risk of loss and title shall transfer to 
+Apple, when they are physically delivered to Apple and withdrawn from the Hub. If the Goods ordered are destroyed 
+prior to title passing to Apple, Apple may at its option cancel the applicable PO without liability or require delivery 
+of substitute Goods of equal quantity and quality. Such delivery will be made as soon as commercially practicable. If 
+loss of Goods is partial, Apple shall have the right to require delivery of the Goods not destroyed. 
+4. PAYMENT. 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+4.1. As full consideration for the performance of the Services, delivery of the Goods and the assignment of rights to 
+Apple as provided in this Agreement, Apple shall pay Seller (i) the amount agreed upon and specified in the applicable 
+PO,  or  (ii)  Seller's  quoted  price  on  date  of  shipment  (for  Goods),  or  the  date  Services  were started  (for  Services), 
+whichever is lower; provided, however, that if the designated destination for Goods is a Hub Apple shall pay Seller 
+(a) the amount agreed upon and specified in the applicable PO, or (b) Seller's quoted price on the date such Goods are 
+physically delivered to Apple and withdrawn from the Hub, whichever is lower. Applicable taxes and other charges 
+such as shipping costs, duties, customs, tariffs, imposts, and government-imposed surcharges shall be stated separately 
+on Seller's invoice. Payment is made when Apple's check is mailed. Payment shall not constitute acceptance. All duties 
+and taxes assessable upon the Goods prior to receipt by Apple of Goods conforming to the PO shall be borne by Seller. 
+Seller shall invoice Apple  for all  Goods delivered and all Services actually performed. Each invoice submitted by 
+Seller must be provided to Apple within ninety (90) days of completion of the Services or delivery of Goods and must 
+reference the applicable PO, and Apple reserves the right to return all incorrect invoices. Apple will  receive a 2% 
+discount of the invoiced amount for all invoices that are submitted more than ninety (90) days after completion of the 
+Services or delivery of the Goods. Apple shall pay the invoiced amount within the timeframe set forth on the face of 
+the PO (which timeframe begins after receipt by Apple of a valid, correct and undisputed invoice). Seller will receive 
+no royalty or other remuneration on the production or distribution of any products developed by Apple or Seller in 
+connection with or based on the Goods or Services provided. 
+4.2. If Apple disputes the accuracy of an invoice  (a "Billing  Dispute"), Apple will not later than  thirty (30) days 
+following the date of such invoice, notify Seller in writing of the nature of the Billing Dispute. Apple may withhold 
+payment of the disputed amount and such payment will not be considered past due during Seller's investigation. Seller 
+will make commercially reasonable efforts to completely resolve the Billing Dispute within thirty (30) days following 
+the date on which Seller received Apple's initial billing inquiry. If the parties are unable to resolve the Billing Dispute 
+within such thirty (30) day period, it will be resolved pursuant to Section 28 below. 
+4.3. Seller shall maintain written or electronic records reflecting the basis for any charges billed in connection with a 
+PO for five (5) years after Seller's receipt of Apple's final payment with respect to the PO. Apple shall have the right, 
+but not the obligation, at any time or from time to time, during regular business hours, upon not less than twenty-four 
+(24) hours notice to Seller, to inspect, audit or examine Seller's operations, records, systems and facilities to determine 
+Seller's and any sub-contractor's compliance with the PO and the basis for any amounts billed to Apple. Any such 
+inspection, examination, and/or audit shall not (i) relieve Seller of any obligation, responsibility or liability, or (ii) 
+constitute Apple's approval of or consent to any actions undertaken or methods, systems and/or procedures used by 
+Seller. Any inspection, examination and/or audit that Apple may perform shall be for Apple's sole benefit. If any such 
+audit discloses any overcharges, Seller shall, on demand, pay Apple the amount of such overcharges, together with 
+interest on such overcharges at the rate of ten percent (10%) per annum, or the maximum amount allowed by law, 
+whichever  is  less,  from  the  date  of  each  such  overcharge,  until  reimbursed  to  Apple.  If  any  such  audit  discloses 
+overcharges, in addition to any amounts to which Apple may be entitled, Seller shall, on demand, reimburse Apple 
+for all costs and expenses incurred by Apple in connection with such audit. 
+5. WARRANTIES. 
+5.1.  Services.  Seller  represents  and  warrants  that  all  Services  shall  be  completed  in  a  professional,  workmanlike 
+manner, with the degree of skill and care that is required by current, good, and sound professional procedures. Further, 
+Seller represents and warrants that the Services shall be completed in accordance with applicable specifications and 
+any statements of work signed by an authorized representative of Apple and shall be correct and appropriate for the 
+purposes stated therein. Seller represents and warrants that the performance of Services under this Agreement will not 
+conflict with, or be prohibited in any way by, any other agreement or statutory restriction to which Seller is bound. 
+5.2. Goods. Seller warrants that it has good and transferable title to the Goods and that all Goods provided will be new 
+and will not be used or refurbished. Seller warrants that all Goods delivered shall be free from all defects and shall 
+conform to all applicable specifications and any statements of work signed by an authorized representative of Apple 
+for a period of fifteen (15) months from the date of delivery to Apple or for the period provided in Seller's standard 
+warranty covering the Goods, whichever is longer. Seller hereby agrees that it will make spare parts available to Apple 
+for  a  period  of  seven  (7)  years  from  the  date  of  shipment  at  Seller's  then  current  price,  less  applicable  discounts. 
+Additionally, Goods purchased shall be subject to all written and oral express warranties made by Seller's agents, and 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+to all warranties provided for by the California Commercial Code. All warranties shall be construed as conditions as 
+well as  warranties  and  shall  not  be  exclusive.  Seller  shall  furnish  to  Apple  Seller's  standard  warranty  and  service 
+guaranty applicable to the Goods. All warranties shall run both to Apple and to its customers. If Apple identifies a 
+warranty problem with the Goods during the warranty period, Apple will promptly notify Seller of such problems and 
+will return the Goods to Seller, at Seller's expense. Within five (5) business days of receipt of the returned Goods, 
+Seller shall, at Apple's option, either repair or replace such Goods, or credit Apple's account for the same. Replacement 
+and repaired Goods shall be warranted for the remainder of the warranty period or six (6) months, whichever is longer. 
+6.  INSPECTION.  Apple  shall  have  a  reasonable  time  after  receipt  of Goods  or  Service  deliverables  and  before 
+payment to inspect them for conformity to the PO and applicable specifications and any statements of work signed by 
+an  authorized  representative  of  Apple,  and  Goods  received  prior  to  inspection  shall  not  be  deemed accepted  until 
+Apple has run adequate tests to determine whether the Goods conform thereto. Use of a portion of the Goods for the 
+purpose of testing shall not constitute an acceptance of the Goods. If Goods tendered do not wholly conform with the 
+provisions hereof, Apple shall have the right to reject such Goods. Nonconforming Goods will be returned to Seller 
+freight collect and risk of loss will pass to Seller upon Apple's delivery to the common carrier. 
+7.  INDEPENDENT  CONTRACTOR.  Apple  is  interested  only in  the  results  obtained  under  this  Agreement;  the 
+manner and means of achieving the results are subject to Seller’s sole control. Seller is an independent contractor for 
+all  purposes,  without  express  or  implied  authority  to  bind  Apple  by  contract  or  otherwise.  Neither  Seller  nor  its 
+employees,  agents  or  subcontractors  ("Seller Parties")  are  agents  or  employees  of  Apple,  and  therefore  are  not 
+entitled  to  any  employee  benefits  of  Apple,  including  but  not  limited  to,  any  type  of  insurance.  Seller  shall  be 
+responsible for all costs and expenses incident to performing its obligations under this Agreement and shall provide 
+Seller's own supplies and equipment. Apple may require a background check of any of Seller Parties who perform 
+Services on Apple premises, and Seller hereby agrees to conduct such investigation in accordance with background 
+check standards to be provided by Apple, and shall at all times comply with all laws and regulations applicable to 
+background  investigations.  Apple  shall  keep  the  results  of  any  such  investigation  confidential,  and  provide  such 
+information only to those persons with a business need to know, or as required by applicable law. Seller Parties shall 
+observe the working rules of all Apple premises when on such premises. Apple reserves the right to prohibit any Seller 
+Parties from performing Services on Apple's premises. 
+8. SELLER RESPONSIBLE FOR TAXES AND RECORDS.  Except as otherwise required by applicable law, Apple 
+shall have no responsibility to pay or withhold from any payment to Seller under this Agreement, any federal, state, 
+or local taxes or fees.  Seller shall be liable for any applicable income taxes, levies, duties, costs, charges, withholdings, 
+deductions or any charges of equivalent effect imposed on, or in respect of the Services provided by Seller to Apple 
+under  this  Agreement.    Where  applicable,  Seller  will  charge  Apple  sales  tax,  excise  tax,  use  tax,  value  added  tax 
+("VAT"), goods and services tax ("GST"), consumption tax, or equivalent type charges (hereinafter "Transaction 
+Taxes") that are owed by Apple solely as a result of the Services provided by Seller to Apple under this Agreement 
+and which are required or permitted to be collected from Apple by Seller under applicable law.  If Apple provides 
+Seller with a valid exemption certificate, Seller shall not collect the Transaction Taxes covered by such certificate.  All 
+charges will be supported by valid tax invoices provided by Seller to Apple consistent with the applicable EU invoicing 
+directive  or  comparable  authority  of  the  relevant  jurisdiction.    Where any  relevant  taxation  authority  imposes  any 
+income tax on the payment for Services by Apple to Seller and requires Apple to withhold such tax ("Withholding 
+Tax"), Apple may deduct such Withholding Tax from the payment to Seller and remit such Withholding Tax to the 
+relevant taxing authority on behalf of Seller.  The determination of the applicability of a Withholding Tax is at Apple’s 
+sole discretion.  In the event a reduced Withholding Tax rate may apply on payments to Seller, Seller shall furnish to 
+Apple  as  soon  as  practicable  all  documentation necessary  to  evidence  the  qualifications  for  the  reduced  rate  of 
+Withholding Tax.  If the necessary documentation is not provided in a timely fashion before payment, the reduced 
+Withholding  Tax  rate  will  not  apply  and  any  payments  to  Seller  shall  be  subject  to  the  full  rate  of  Withholding 
+Tax.  Upon  reasonable  request  by  Seller,  Apple  shall  furnish  Seller  with  tax  receipts  or  other  documentation 
+evidencing the payment of such Withholding Tax when available. Upon request, Seller shall provide Apple with a 
+validly executed U.S. Internal Revenue Service form to establish its U.S. or non-U.S. status or any other necessary 
+tax  documentation.  Where  applicable,  a  non-U.S.  Seller  shall  note,  on  each  invoice  issued  to  Apple  under  this 
+Agreement, the amount of Services performed by Seller within the United States, if any.  
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+9.  INSURANCE.  Seller  shall  be  solely  responsible  for  maintaining  and  requiring Seller Parties to  maintain  such 
+adequate health, auto, workers' compensation, unemployment compensation, disability, liability, and other insurance, 
+as is required by law or as is the common practice in Seller's and Seller Parties' trades or businesses, whichever affords 
+greater  coverage.  Upon  request,  Seller  shall  provide  Apple  with  certificates  of  insurance  or  evidence  of  coverage 
+before commencing performance under this Agreement. Seller shall provide adequate coverage for any Apple property 
+under the care, custody or control of Seller or Seller Parties. 
+10. INDEMNITY. Seller shall indemnify, hold harmless, and at Apple's request, defend Apple, its officers, directors, 
+customers, agents and employees, against all claims, liabilities, damages, losses, and expenses, including attorneys' 
+fees, interest, and cost of suit arising out of or in any way connected with the Goods or Services provided pursuant to 
+a PO, including, without limitation, (i) any claim based on the death or bodily injury to any person, destruction or 
+damage to property, or contamination of the environment and any associated clean up costs, (ii) Seller failing to satisfy 
+the  Internal  Revenue  Service's  guidelines  for  an  independent  contractor,  (iii)  any  claim  based  on  the  negligence, 
+omissions, or willful misconduct of Seller or any of Seller Parties, (iv) Seller  failing to satisfy its obligations with 
+regard to the protection of Confidential Data as described in Section 11 below, (v) the failure of Seller or any Seller 
+Parties to comply with a requirement of applicable law, including but not limited to, those relevant to the payment of 
+any  wages  and/or  any  other  compensation,  or  statutory  benefits  of  employment, including  but  not  limited  to, 
+Workers’ Compensation insurance, and/or for statutory penalties and/or interest, and (vi) any claim by a third party 
+against Apple alleging that the Goods or Services, the results of such Services, or any other products or processes 
+provided pursuant to a PO, infringe a patent, copyright, trademark, trade secret, or other proprietary right of a third 
+party, whether such are provided alone or in combination with other products, software, or processes. Seller shall not 
+settle any such suit or claim without Apple's prior written approval. Seller agrees to pay or reimburse all costs that 
+may  be  incurred  by  Apple  in  enforcing  this  indemnity,  including  attorneys'  fees.  Should  the use  of  any  Goods  or 
+Services by Apple, its distributors, subcontractors, or customers be enjoined, be threatened by injunction, or be the 
+subject of any legal proceeding, Seller shall, at its sole cost and expense, either (a) substitute fully equivalent non-
+infringing  Goods  or  Services;  (b)  modify  the  Goods  or  Services  so  that  they  no  longer  infringe  but  remain  fully 
+equivalent in functionality; (c) obtain for Apple, its distributors, subcontractors, or customers the right to continue 
+using the Goods or Services; or (d) if none of  the foregoing is possible, refund all amounts paid for the infringing 
+Goods or Services. 
+11. CONFIDENTIALITY; PERSONAL DATA; DATA SECURITY.  
+11.1  Confidentiality.    Seller  may  acquire  knowledge  of  Apple  Confidential  Information  (as defined  below)  in 
+connection  with  its  performance  hereunder  and  agrees  to  keep  such Apple  Confidential  Information  in  confidence 
+during and following termination or expiration of this Agreement. "Apple Confidential Information" includes but 
+is not limited to all information, whether written or oral, in any form, including without limitation, information relating 
+to the research, development, products, methods of manufacture, trade secrets, business plans, customers, vendors, 
+finances, personnel data, Work Product (as defined in Section 12, below), and other material or information considered 
+proprietary by Apple relating to the current or anticipated business or affairs of Apple which is disclosed directly or 
+indirectly to Seller. In addition, Apple Confidential Information means any third party's proprietary or confidential 
+information disclosed to Seller in the course of providing Services or Goods to Apple. Apple Confidential Information 
+does  not  include  any  information  (i)  which  Seller  lawfully  knew  without  restriction  on  disclosure  before  Apple 
+disclosed it to Seller, (ii) which is now or becomes publicly known through no wrongful act or failure to act of Seller, 
+(iii)  which  Seller  developed  independently  without  use  of  the  Apple  Confidential  Information,  as  evidenced  by 
+appropriate documentation, or (iv) which is hereafter lawfully furnished to Seller by a third party as a matter of right 
+and without restriction on disclosure. In addition, Seller may disclose Apple Confidential Information that is required 
+to be disclosed pursuant to a requirement of a government agency or law so long as Seller provides prompt notice to 
+Apple of such requirement prior to disclosure. Seller agrees not to copy, alter, or directly or indirectly disclose any 
+Apple  Confidential  Information.  Additionally,  Seller  agrees  to  limit  its  internal  distribution  of  Apple  Confidential 
+Information to Seller Parties who have a need to know, and to take steps to ensure that the dissemination is so limited, 
+including the execution by Seller Parties of nondisclosure agreements with provisions substantially similar to those 
+set forth in this Agreement. In no event will Seller use less than the degree of care and means that it uses to protect its 
+own information of like kind, but in any event not less than reasonable care to prevent the unauthorized use of Apple 
+Confidential Information. Seller further agrees not to use the Apple Confidential Information except in the course of 
+performing hereunder and will not use such Apple Confidential Information for its own benefit or for the benefit of 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+any third party. The mingling of the Apple Confidential Information with information of Seller shall not affect the 
+confidential  nature  or  ownership  of  the  same  as  stated  hereunder. Seller  agrees  not  to  design  or  manufacture  any 
+products incorporating Apple Confidential Information without Apple's express written consent in each instance. All 
+Apple Confidential Information is and shall remain Apple property. Upon Apple's written request or the termination 
+of this Agreement, Seller shall return, transfer, or assign to Apple all Apple Confidential Information, including all 
+Work Product. 
+11.2  Protection  of  Personal  Data.  As  a  result  of  this  Agreement,  Seller  and Seller Parties may  obtain  certain 
+information relating to identified or identifiable individuals (“Personal  Data”), including but not limited to, from 
+Apple on Apple’s or its affiliate(s)’ behalf and/or from Apple affiliates located in any jurisdiction. Seller shall have 
+no right, title or interest in Personal Data obtained by it as a result of this Agreement. The details of the type of Personal 
+Data and categories of data subjects shall be determined in a PO, statements of work or other contractual instruments 
+executed in connection with this Agreement.  
+ 
+Seller may only disclose Personal Data to third parties (including Seller Parties), who have a need to know and have 
+signed agreements that require them to protect Personal Data in the same manner as detailed in this Agreement. Seller 
+shall not engage any third party to perform any portion of the Services if such party may obtain or otherwise process 
+Personal Data, without Apple’s prior written consent. Notwithstanding such consent, Seller shall not be relieved of 
+any obligations under this Section and shall remain solely liable to Apple if the third party fails to fulfil its obligations 
+with respect to Personal Data. 
+ 
+Seller  and Seller Parties shall: (i) comply with Apple’s or its affiliate’s reasonable instructions regarding Personal 
+Data, unless otherwise required by applicable law, in which case, Seller shall promptly notify Apple of the applicable 
+legal  requirement  before  processing  Personal  Data,  unless  such  applicable  legal  requirement  prohibits  such 
+notification  for  public  interest  reasons;  (ii) immediately  inform  Apple  if,  in  its  opinion, an  instruction  from  Apple 
+infringes  Regulation  (EU)  2016/679  of  the  European  Parliament  and  of  the  Council  of  27  April  2016 or  other 
+applicable data protection laws; (iii) collect, access, maintain, use, process and transfer Personal Data solely for the 
+purpose of performing Seller’s obligations under this Agreement; (iv) comply with all applicable laws, regulations 
+and international  accords  or  treaties pertaining  to  Personal  Data; (v)  take  all  appropriate  legal,  organizational  and 
+technical measures to protect against unlawful and unauthorized processing of Personal Data; and (vi) promptly notify 
+Apple’s Privacy Counsel at privacy_notifications@apple.com if it receives any requests from an individual with 
+respect  to  Personal  Data,  including  but  not  limited  to, “opt-out”  specifications, information access  requests, 
+information rectification requests and all like requests. Seller shall work with Apple to promptly and effectively handle 
+such requests with respect to Personal Data, and only respond to any such requests if expressly authorized to do so by 
+Apple. 
+ 
+If Personal Data is transferred from the European Economic Area or Switzerland to or by Seller and/or Seller Parties, 
+as processor and/or sub-processor, to a jurisdiction which the European Commission or, where relevant, the Swiss 
+Federal  Data  Protection  and  Information  Commissioner,  have  not  determined  as  ensuring  an  adequate  level  of 
+protection  of  personal  data,  then Seller  shall  either:  (a)  subscribe  to  the  appropriate  legal  instruments  for  the 
+international  transfer  of  data  (such  as  the  EU-U.S.  Privacy  Shield  Framework);  or  (b)  execute:  (1)  the  Standard 
+Contractual Clauses as approved by the European Commission; and (2) where relevant, the Swiss Transborder Data 
+Flow Agreement; or (c) execute mutually agreeable contractual instruments or Binding Corporate Rules (BCR) as 
+such BCR are approved by the relevant supervisory authority. 
+ 
+Seller shall be liable for the damage caused to any individual as a result of Seller’s processing of Personal Data, where 
+Seller has not complied with its obligations under this Section or any applicable laws, regulations and international 
+accords or treaties pertaining to Personal Data, or where it has acted outside or contrary to lawful instructions from 
+Apple. 
+ 
+ 
+11.3 Data Security.  Seller shall take all appropriate legal, organizational and technical measures to protect against 
+unlawful and unauthorized processing of Personal Data or Apple Confidential Information ("Confidential Data").  
+Seller shall maintain reasonable operating standards and security procedures, and shall use its best efforts to secure 
+Confidential Data through the use of appropriate physical and logical security measures including, but not limited to, 
+appropriate network security and encryption technologies, and the use of reasonable user identification or password 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+control requirements, including multiple-factor authentication, strong passwords, session time-outs, and other security 
+procedures as may be issued from time to time by Apple.  If requested by Apple at any time during the term of this 
+Agreement, Seller shall provide Apple with a copy of Seller’s then current security policy.  Seller shall promptly notify 
+Apple if Seller knows or has reason to believe there has been any misuse, compromise, loss, or unauthorized disclosure 
+or  acquisition  of,  or  access  to,  Confidential  Data  (“Information  Security  Breach”).  Upon  any  discovery  of  an 
+Information Security Breach, Seller will investigate, remediate, and mitigate the effects of the Information Security 
+Breach, and provide Apple with assurances reasonably satisfactory to Apple that such Information Security Breach 
+will not recur. Seller shall provide at Apple’s request information related to any such Information Security Breach, 
+including but not limited to, vulnerabilities or flaws, start or end date, date of discovery, and specific actions taken to 
+contain and/or mitigate. If any Information Security Breach occurs as a result of an act or omission of Seller or Seller 
+Parties, Seller will, at Seller’s sole expense, undertake remedial measures (including notice, credit monitoring services, 
+fraud insurance and the establishment of a call center to respond to customer inquiries) in accordance with Apple’s 
+instructions.  
+ 
+11.4 Assistance. Seller shall provide Apple with reasonable assistance and support and shall act solely at Apple’s 
+direction in (i) responding to an investigation or cooperation request by a data protection regulator or similar authority; 
+(ii) providing notice of an Information Security Breach to any third party where required or requested by Apple; (iii) 
+conducting  legally  required  privacy,  security,  or  data  protection  impact  assessments;  and  (iv)  consulting  with  the 
+relevant authorities when required in relation to such impact assessments.  
+ 
+11.5 Return  or  Destruction  of  Confidential  Data.  Upon  termination  of  this  Agreement  for  any  reason,  Seller  shall 
+promptly contact Apple for instructions regarding the return, destruction or other appropriate action with regard to 
+Confidential Data.  Upon termination of this Agreement for any reason, or at any time at the request of Apple, Seller 
+shall: (i) return all Confidential Data to Apple, including but not limited to all paper and electronic files, materials, 
+documentation, notes, plans, drawings, and all copies thereof, and ensure that all electronic copies of such Confidential 
+Data are deleted from Seller’s (and where applicable, its Subcontractors’) systems; or (ii) if requested by Apple in 
+writing, promptly destroy, delete and render unrecoverable all tangible and electronic instances of Confidential Data 
+from Seller’s (and where applicable, its Subcontractors’) systems, all in accordance with the National Institute of 
+Standards  and  Technology  (NIST)  Guidelines  for  Media  Sanitization.    If  requested  by  Apple,  Seller  shall  provide 
+Apple with written confirmation of its compliance with the requirements of this Section.  
+ 
+11.6 Notification of Non-Compliance. If Seller is unable to comply with the obligations stated in this Section, Seller 
+shall promptly notify Apple, and Apple may take any one or more of the following actions: (i) suspend the transfer of 
+Confidential Data to Seller; (ii) require Seller to cease processing Confidential Data; (iii) demand the secure return or 
+destruction of Confidential Data; and/or (iv) immediately terminate this Agreement. 
+ 
+11.7 Seller shall make available to Apple all information necessary to demonstrate compliance with the obligations of 
+this Section and all applicable laws, regulations and international accords or treaties pertaining to Personal Data; and 
+acknowledges and agrees that Apple or an Apple-appointed third-party (collectively, “Monitor”) has the right, for the 
+purpose of verifying compliance with the requirements of this Section, to review the systems, records and/or facilities 
+of Seller and Seller’s subcontractors and  affiliates  that  provide  goods  and/or  services  related  to  or  involving  the 
+processing, transport or storage of Confidential Data. Apple will announce its intent to review Seller in accordance 
+with this Section by providing at least five (5) business days’ notice to Seller. Seller will provide Monitor with access 
+to its site, systems and records as reasonably necessary to assess compliance with the requirements of this Section. At 
+Apple’s reasonable request, Seller will provide Monitor with a personal site guide while on-site.  Seller will make 
+available to Monitor, for in-person or phone interviews, any Seller employees and/or contractors for the provision of 
+information and cooperation related to the verification hereunder. Such verification will be at Apple's expense, unless 
+it reveals material non-compliance with the requirements of this Section, in which case the cost will be borne by Seller. 
+ 
+ 
+12.  OWNERSHIP  OF  WORK  PRODUCT.  For  purposes  of  this  Agreement, "Work  Product" includes,  without 
+limitation, all designs, discoveries, creations, works, devices, masks, models, work in progress, Service deliverables, 
+inventions,  products,  computer  programs,  procedures,  improvements,  developments,  drawings,  notes,  documents, 
+information and materials made, conceived, or developed by Seller, alone or with others, which result from or relate 
+to the Services performed pursuant to a PO, and all copies thereof. Standard Goods manufactured by Seller and sold 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+to Apple without having been designed, customized, or modified for Apple do not constitute Work Product. All Work 
+Product shall at all times be and remain the sole and exclusive property of Apple. Seller hereby agrees to irrevocably 
+assign and transfer to Apple and does hereby assign and transfer to Apple all of its worldwide right, title, and interest 
+in  and  to  the  Work  Product  including  all  associated  intellectual  property  rights.  Apple  will  have  the  sole  right  to 
+determine the treatment of any Work Product, including the right to keep it as trade secret, execute and file patent 
+applications on it, to use and disclose it without prior patent application, to file registrations for copyright or trademark 
+in its own name, or to follow any other procedure that Apple deems appropriate. Seller agrees: (a) to disclose promptly 
+in writing to Apple all Work Product in its possession; (b) to assist Apple in every reasonable way, at Apple's expense, 
+to secure, perfect, register, apply for, maintain, and defend for Apple's benefit all copyrights, patent rights, mask work 
+rights, trade secret rights, and all other proprietary rights or statutory protections in and to the Work Product in Apple's 
+name  as  it  deems  appropriate;  and  (c)  to  otherwise  treat  all  Work  Product  as  Apple  Confidential  Information  as 
+described  above.  These  obligations  to  disclose,  assist,  execute,  and  keep  confidential  survive  the  expiration  or 
+termination of this Agreement. All tools and equipment supplied by Apple to Seller shall remain the sole property of 
+Apple. Seller will ensure that Seller Parties appropriately waive any and all claims and assign to Apple any and all 
+rights  or  any  interests  in  any  Work  Product  or  original  works  created  in  connection  with  this  Agreement.  Seller 
+irrevocably agrees not to assert against Apple or its direct or indirect customers, assignees, or licensees any claim of 
+any intellectual property rights of Seller affecting the Work Product. Apple will not have rights to any works conceived 
+or reduced to practice by Seller which were developed entirely on Seller's own time without using equipment, supplies, 
+facilities, or trade secret or Apple Confidential Information, unless (i) such works relate to Apple's business, or Apple's 
+actual or demonstrably anticipated research or development, or (ii) such works result from any Services performed by 
+Seller for Apple. 
+13. ANTI-CORRUPTION.   
+13.1 Seller shall comply with, and shall ensure that all Seller Parties comply with Apple’s Anti-Corruption Policy as 
+posted on Apple’s public website, and with all  applicable  laws  and  regulations  enacted  to  combat  bribery  and 
+corruption, including the United States Foreign Corrupt Practices Act, the UK Bribery Act, the principles of the OECD 
+Convention on Combating Bribery of Foreign  Public Officials, and any corresponding laws of all countries where 
+business or services will be conducted or performed pursuant to this Agreement.   Seller shall not, and shall ensure 
+that Seller Parties do not, either directly or indirectly, pay, offer, promise to pay, or give anything of value (including 
+any amounts paid or credited by Apple to Seller) to any person including an employee or official of a government, 
+government controlled enterprise or company, or political party, with the reasonable knowledge that it will be used 
+for the purpose of obtaining any improper benefit or to improperly influence any act or decision by such person or for 
+the  purpose  of  obtaining,  retaining,  or  directing  business.  Any  amounts  paid  by  Apple  to  Seller  or Seller 
+Parties pursuant to the terms of this Agreement will be for services actually rendered, or products sold, in accordance 
+with the terms of this Agreement.  Seller shall not, and shall ensure that Seller Parties do not, offer or accept bribes or 
+kickbacks in any form.  
+13.2 Disclosure of Government Related Parties.  Seller and Seller Parties represents and warrants that they have, to 
+the best of the Seller’s and Seller’s Affiliate’s knowledge and to the extent permitted by law, provided Apple with 
+complete and accurate information regarding any majority owner, partner, officer, director, manager of Seller or Seller 
+Parties, or any other party who is authorized to conduct business on behalf of Seller or Seller Parties (collectively, 
+"Seller Authorized Parties") that is, has been or will become, an official or employee of a governmental entity or 
+political party or a candidate for political office (each, a "Government Related Party").  If at any time during the 
+term of this Agreement, Seller or Seller Parties becomes aware, or otherwise has reason to believe, that any Seller 
+Authorized Party is, has been or will become, a Government Related Party, then, to the extent permissible by law, 
+Seller shall promptly notify Apple. 
+14.  NO GRATUTIES. Seller shall not, and shall ensure that Seller Parties do not, either directly, or indirectly, offer 
+or give any person or entity any gift, gratuity, payment or other inducement with a view toward securing business 
+from Apple or influencing the terms, conditions or performance of this Agreement or any PO.   
+15. TERMINATION. Apple may terminate this Agreement upon written notice to Seller if Seller fails to perform or 
+otherwise breaches this Agreement, files a petition in bankruptcy, becomes insolvent, or dissolves. In the event of 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+such termination, Apple shall pay Seller for the portion of the Services satisfactorily performed and those conforming 
+Goods delivered to Apple through the date of termination, less appropriate offsets, including any additional costs to 
+be incurred by Apple in completing the Services. Apple may terminate this Agreement for any other reason upon ten 
+(10) days' written notice to Seller. Seller shall cease to perform Services and/or provide Goods under this Agreement 
+on the date of termination specified in such notice. In the event of such termination, Apple shall be liable to Seller 
+only for those Services satisfactorily performed and those conforming Goods delivered to Apple through the date of 
+termination, less appropriate offsets. Seller may terminate this Agreement upon written notice to Apple if Apple fails 
+to pay Seller within sixty (60) days after Seller notifies Apple in writing that payment is past due. Upon the expiration 
+or termination of this Agreement for any reason: (i) each party will be released from all obligations to the other arising 
+after the date of expiration or termination, except for those which by their terms survive such termination or expiration; 
+and  (ii)  Seller  will  promptly  notify  Apple  of  all  Apple  Confidential  Information  or  any  Work  Product  in  Seller's 
+possession and, at the expense of Seller and in accordance with Apple's instructions, will promptly deliver to Apple 
+all such Apple Confidential Information and/or Work Product. 
+16. SURVIVAL OF OBLIGATIONS. Any obligations and duties that by their nature extend beyond the expiration or 
+termination of this Agreement shall survive the expiration or termination of this Agreement. 
+17. FORCE MAJEURE. Neither party will be liable for any failure to perform, including failure to accept performance 
+of  Services  or  take  delivery  of  the  Goods  as  provided,  caused  by  circumstances  beyond  its  reasonable  control 
+including, but not limited to, acts of God, acts of war, government action or accident, provided it promptly notifies 
+the other party and uses reasonable efforts to correct its failure to perform. 
+18. SEVERABILITY. If any provision of this Agreement shall be deemed to be invalid, illegal or unenforceable, the 
+validity, legality, and enforceability of the remaining provisions shall not in any way be affected or impaired thereby. 
+19. REMEDIES. If Seller breaches this Agreement, Apple shall have all remedies available by law and at equity. For 
+the purchase of Goods, Seller's sole remedy in the event of breach of this Agreement by Apple shall be the right to 
+recover damages in the amount equal to the difference between market price at the time of breach and the purchase 
+price specified in the Agreement. No alternate method of measuring damages shall apply to this transaction. Seller 
+shall have no right to resell Goods for Apple's account in the event of wrongful rejection, revocation of acceptance, 
+failure to make payment or  repudiation by Apple and any resale so made shall be for the account of Seller. Seller 
+acknowledges and agrees that the obligations and promises of Seller under this Agreement are of a unique, intellectual 
+nature giving them particular value. Seller's breach of any of the promises contained in this Agreement will result in 
+irreparable and continuing damage to Apple for which there will be no adequate remedy at law and, in the event of 
+such breach, Apple will be entitled to seek injunctive relief, or a decree of specific performance. 
+20. ATTORNEYS' FEES. In any action to enforce this Agreement, the prevailing party shall be entitled to recover all 
+court costs and expenses and reasonable attorneys' fees, in addition to any other relief to which it may be entitled. 
+21.  LIMITATION  OF  LIABILITY.  IN  NO  EVENT  SHALL  APPLE  BE  LIABLE  TO  SELLER  OR SELLER 
+PARTIES, OR ANY THIRD PARTY FOR ANY INCIDENTAL, INDIRECT, SPECIAL, OR CONSEQUENTIAL 
+DAMAGES  ARISING  OUT  OF,  OR  IN  CONNECTION  WITH,  THIS  AGREEMENT,  WHETHER  OR  NOT 
+APPLE WAS ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+22.  ASSIGNMENT/WAIVER.  Seller  may  not  assign  this  Agreement  or  any  of  its  rights  or  obligations  under  this 
+Agreement, without the prior written consent of Apple. Any assignment or transfer without such written consent shall 
+be null and void. A waiver of any default or of any term or condition of this Agreement shall not be deemed to be a 
+continuing waiver or a waiver of any other default or any other term or condition. 
+23. NONEXCLUSIVE AGREEMENT. This is not an exclusive agreement. Apple is free to engage others to perform 
+Services or provide Goods the same as or similar to Seller's. Seller is free to, and is encouraged to, advertise, offer, 
+and provide Seller's Services and/or Goods to others; provided however, that Seller does not breach this Agreement. 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+24. NOTICES. Except for POs which may be sent by local mail, facsimile transmission, or electronically transmitted, 
+all notices required or permitted by this Agreement must be in writing addressed to the authorized representative(s) 
+of the other party. Notice will be deemed given (i) when delivered personally; (ii) when sent by confirmed facsimile; 
+(iii)  one  day  after  having  been  sent  by  commercial  overnight  carrier  specifying  next-day  delivery  with  written 
+verification of receipt; and (iv) three days after having been sent by first class or certified mail postage prepaid. A 
+copy of any notice sent to Apple must also be sent simultaneously to Apple's General Counsel at Apple Inc., One 
+Apple Park Way, Cupertino, CA 95014, fax (408) 974-8530. 
+25. COMPLIANCE WITH LAWS; SAFETY AND LABOR STANDARDS. 
+25.1.  General.  Seller  and Seller Parties will  comply  with  all  applicable  laws  and  regulations  (including,  without 
+limitation, the applicable laws, orders, policies, and regulations of the U.S. Government, U.S. Customs, and any other 
+jurisdiction  in  which  Goods  or  Services  are provided,  relating  to  import,  export  and  re-export  of  commodities, 
+technical  data  and  software,  privacy,  labor  and  employment,  anti-discrimination  and  anti-harassment,  freedom  of 
+association,  environmental  protection,  hazardous  substances  management,  pollution  prevention  and  resource 
+sustainability, waste management, recycling, protection of intellectual property, and anti-corruption) and Seller will 
+defend and hold Apple harmless from any expense or damage resulting from its violation or alleged violation of any 
+such law or regulation in the performance of this Agreement. Seller is solely responsible for compliance by Seller 
+and/or Seller Parties with all laws and regulations regarding the payment of wages and/or other compensation to Seller 
+Parties, including ensuring the provision of Workers’ Compensation insurance for all Seller Parties. 
+25.2 Supplier Code of Conduct. At all times during the term of this Agreement, Seller will comply with the Apple 
+Supplier Code of Conduct ("Code of Conduct"), as amended by Apple from time-to-time, available from Apple’s 
+public  website  at  https://www.apple.com/supplier-responsibility/. Notwithstanding  anything  to  the  contrary  herein, 
+Seller  will:    (i)  allow  Apple  and  a  third  party  representative,  retained  by  or  representing  Apple  (collectively,  the 
+"Auditor"), to assess Seller’s compliance with the Code of Conduct by inspecting Seller’s facilities and/or reviewing 
+Seller’s practices, policies, and relevant records without notice, and/or by interviewing Seller’s personnel without 
+monitoring, solely to verify Seller’s compliance with the Code of Conduct (collectively, an "Assessment");  (ii) 
+promptly provide the Auditor with access to any relevant facilities and personnel without disruption or interference, 
+in connection with any Assessment; (iii) promptly provide complete and accurate information and documentation in 
+response  to the Auditor’s requests, (iv) allow the Auditor  to  review  and  assess  working  hours  and  conditions, 
+remuneration  and  benefits,  personnel  practices,  production,  dormitory,  and  dining  facilities,  business  conduct,  and 
+health,  safety,  and  environmental  practices,  as  applicable,  in  connection  with  any  Assessment;  (v)  not  request  or 
+encourage, directly or indirectly, any Seller personnel to furnish false or incomplete information in connection with 
+any Assessment; (vi) not take retaliatory action against any Seller personnel interviewed during an Assessment; and 
+(vii) promptly implement corrective action to remedy any material non-conformance with the Code of Conduct.  Apple 
+may disclose the results of any Assessment in connection with its corporate responsibility, corporate compliance, and 
+periodic  reporting  activities.    Seller  will  obtain  all  permits,  consents,  and  authorizations  necessary  to  enable  the 
+Auditor to assess Seller’s policies, practices, records, and facilities.  Seller’s failure to perform its obligations described 
+in this subsection or to remedy any material non-conformance with the Code of Conduct after a reasonable amount of 
+time will constitute a breach of this Agreement.  For purposes of this subsection, the term “Seller” includes any party 
+that performs a material portion of the obligations to Apple under this Agreement. 
+25.3.  Export  Compliance.  Seller  agrees  that  it  will  not  export,  re-export,  resell  or  transfer  any  export  controlled 
+commodity, technical data or software (i) in violation of such limitations imposed by the United States or any other 
+appropriate national government authority; or (ii) to any country for which an export license or other governmental 
+approval is required at the time of export, without first obtaining all necessary licenses or other approvals.  
+25.4. Customs. Upon Apple's request, Seller will promptly provide Apple with a statement of origin for all Goods and 
+United States Customs documentation for Goods wholly or partially manufactured outside of the United States.  To 
+the extent that services will be provided in the United States and/or that Goods will be transported into the United 
+States, Seller represents that either (a) it is C-TPAT certified by U.S. Customs & Border Protection, and will maintain 
+that certification while providing services in, or transporting Goods into, the United States or (b) it will comply with 
+the  C-TPAT  (Customs  Trade  Partnership  Against  Terrorism)  security  procedures  that  may  be  found  on  the  U.S. 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+Customs website at www.cbp.gov <http://www.cbp.gov> (or such other website that the C-TPAT security procedures 
+may be moved to by the U.S. Government). 
+25.5.  Equal  Employment  Opportunity.  Apple  is  committed  to  the  requirements  of  Executive  Order  11246,  the 
+Rehabilitation Assistance Act, and all regulations pertaining to that order. Pursuant to these requirements, the Equal 
+Opportunity Clauses found at 41 Code of Federal Regulations sections 60-1.4(a) (1-7), 60-250.4(a-m), 60-300.5(a) 
+and 60-741.5(a) (1- 6) are incorporated herein by reference as though set forth at length, and made an express part of 
+this Agreement. If applicable, Seller will comply with the following Federal Acquisition Regulations: (i) 52.222-26 
+"Equal Opportunity", (ii) 52.222-35 "Affirmative Action for Special Disabled and Vietnam Veterans", (iii) 52.222-36 
+"Affirmative Action for Handicapped Workers." 
+41 CFR 60-300.5(a) 
+This contractor and subcontractor shall abide by the requirements of 41 CFR 60-300.5(a). This regulation prohibits 
+discrimination against qualified protected veterans, and requires affirmative action by covered prime contractors and 
+subcontractors to employ and advance in employment qualified protected veterans. 
+41 CFR 60-741.5(a) 
+This contractor and subcontractor shall abide by the requirements of 41 CFR 60-741.5(a). This regulation prohibits 
+discrimination  against  individuals  on  the  basis  of  disability,  and  requires  affirmative  action  by  covered  prime 
+contractors and subcontractors to employ and advance in employment qualified individuals with disabilities. 
+25.6.  Hazardous  Materials.  If  Goods  include  hazardous  materials,  Seller  represents  and  warrants  that  Seller 
+understands the nature of any hazards associated with the manufacture, handling, and transportation of such hazardous 
+materials 
+26. PUBLICITY/MARKS. Seller will not use (or permit Seller Parties to use) Apple's trademarks, service marks, trade 
+names, logo or other commercial or product designations for any purpose, or make (or permit Seller Parties to make) 
+any public statement whatsoever (including, without limitation, press releases, media statements, case studies or the 
+like) regarding the existence of this Agreement or the parties' relationship. 
+27.  GOVERNING  LAW.  This  Agreement  and  the  rights  and  obligations  of  the  parties  will  be  governed  by  and 
+construed and enforced in accordance with the laws of the State of California as applied to agreements entered into 
+and  to  be  performed  entirely  within  California  between  California  residents,  without  regard  to  conflicts  of  law 
+principles.  The  parties  expressly  agree  that  the  provisions  of  the  United  Nations  Convention  on  Contracts  for  the 
+International Sale of Goods will not apply to this Agreement or to their relationship. 
+28. DISPUTE RESOLUTION, JURISDICTION AND VENUE. If there is a dispute between the parties (whether or 
+not the dispute arises out of or relates to this Agreement), the parties agree that they will first attempt to resolve the 
+dispute through one senior management member of each party. If they are unable to do so within sixty (60) days after 
+the complaining party's written notice to the other party, the parties will then seek to resolve the dispute through non-
+binding mediation conducted in Santa Clara County or San Francisco County, California. Each party must bear its 
+own expenses in connection with the mediation and must share equally the fees and expenses of the mediator. If the 
+parties  are  unable  to  resolve  the  dispute  within  sixty  (60)  days  after  commencing  mediation,  either  party  may 
+commence litigation in the state or federal courts in Santa Clara County, California. The parties irrevocably submit to 
+the exclusive jurisdiction of those courts and agree that final judgment in any action or proceeding brought in such 
+courts will be conclusive and may be enforced in any other jurisdiction by suit on the judgment (a certified copy of 
+which will be conclusive evidence of the judgment) or in any other manner provided by law. Process served personally 
+or  by  registered  or  certified  mail,  return  receipt  requested,  will  constitute  adequate service  of  process  in  any such 
+action,  suit  or proceeding.  Each  party  irrevocably  waives  to  the  fullest  extent  permitted  by  applicable  law  (i)  any 
+objection it may have to the laying of venue in any court referred to above;  (ii) any claim that any such action or 
+proceeding has been brought in an inconvenient forum; and (iii) any immunity that it or its assets may have from any 
+
+ 
+OL-AMR-56 v. 2.9 
+ 
+suit, execution, attachment (whether provisional or final, in aid of execution, before judgment or otherwise) or other 
+legal process. 
+29.  EQUITABLE  RELIEF.  Notwithstanding  Section  28  above,  either  party  may  seek  equitable  relief  in  order  to 
+protect its confidential information or intellectual property at any time, provided it does so in the state or federal courts 
+in  Santa  Clara  County,  California  (and  only  those  courts).  The  parties  hereby  waive  any  bond  requirements  for 
+obtaining equitable relief. The confidentiality provisions of this Agreement will be enforceable under the provisions 
+of the California Uniform Trade Secrets Act, California Civil Code Section 3426, as amended. 
+30. ENTIRE AGREEMENT/MODIFICATION. This Agreement is the complete, final, and exclusive statement of the 
+terms of the agreement between the parties and supersedes any and all other prior and contemporaneous negotiations 
+and  agreements  between  them  relating to  the subject  matter  hereof.  This Agreement  may  not  be  varied,  modified, 
+altered, or amended except in writing signed by the parties. The terms and conditions of this Agreement shall prevail 
+notwithstanding any variance with the terms and conditions of any acknowledgment or other document submitted by 
+Seller. Notwithstanding the foregoing, this Agreement will not supersede or take the place of any written agreement 
+that is signed by both parties and covers the same subject matter as this Agreement or its related POs. 
+31.  SOFTWARE PROVISIONS.  In addition to the terms set forth above, the following terms apply as relevant to 
+Apple’s purchase of any Software pursuant to this Agreement: 
+31.1 License Grant and Limitations. Seller hereby grants to Apple and Apple contractors, consultants, and/or agents, 
+a nonexclusive, transferable, worldwide, royalty-free, fully paid, perpetual license (unless specified otherwise in an 
+ordering  document)  to  use,  display  and  reproduce the  Software. Seller reserves  all  rights  not  expressly  granted  to 
+Apple herein. Apple shall not decompile, reverse engineer, disassemble or otherwise attempt to derive source code 
+from the Software except as permitted by law and this Agreement. All Software shall be delivered electronically; if 
+Seller is unable to deliver Software electronically, it shall deliver media containing the Software and Documentation 
+to Apple at 10260 S.W. Greenburg Road, Suite 400, Portland, Oregon 97223 (503/293-8400).  
+31.2 Title to Software. Seller retains title and intellectual property rights to the Software provided hereunder, and does 
+not convey any proprietary interest therein to Apple other than the license specified above. Notwithstanding anything 
+to the contrary included herein, all right, title and interest in and to the following shall vest in Apple and shall be the 
+sole and exclusive property of Apple, and Apple does not convey any proprietary interest therein to Seller: (a) any 
+data used in combination with the Software; (b) all output derived from the use of the Software; and (c) any additional 
+computer programs that Apple develops to operate in combination with the Software for purposes of, including but 
+not limited to, interoperability with Apple or third party systems, technology and/or software and/or development of 
+application programming interfaces. 
+31.3 Software Warranties. In addition to, and without limiting the warranties set forth in Section 5 (Warranties) herein, 
+Seller represents and warrants that: (a) all Software shall conform in all respects to all applicable documentation; and 
+(b)  any  disk(s)  or  other  media  on  which  the  Software  is  recorded  will  be  free  from  defects  in  materials  and 
+workmanship under normal use and service for a period of one (1) year from the date of delivery; (c) the Software and 
+documentation  are  not  subject  to  any open  source  or third  party licenses  that  would  impose  any  obligations, 
+encumbrances, royalties, restrictions or requirements on Apple; (d) the Software is free of any and all viruses, Trojan 
+horses, trap doors, protecting codes or any other internal components, devices or mechanisms which are intended to: 
+(i) cause the Software to perform any material functions other than those described in the Documentation provided to 
+Apple; (ii) halt, disrupt, limit access or grant improper access to or sabotage the Software or any other system, process 
+or device; or (iii) reveal any data or other information accessed through or processed by the Software or other systems, 
+processes or devices without the user’s consent; and (e) the remedies set forth in Section 5.2 (Goods) herein shall 
+apply to any defective or non-conforming Software provided hereunder 

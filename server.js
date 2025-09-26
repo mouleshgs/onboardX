@@ -276,6 +276,31 @@ app.get('/api/vendor/contracts', (req, res) => {
   res.json(list);
 });
 
+// RAG chat endpoint for the widget
+try {
+  const rag = require('./server/rag');
+  app.post('/api/chat', async (req, res) => {
+    try {
+      const message = (req.body && req.body.message) || '';
+      const reply = await rag.getReply(message, req);
+      return res.json({ reply });
+    } catch (e) {
+      console.error('Chat handler error', e && e.message);
+      return res.status(500).json({ reply: 'Internal error' });
+    }
+  });
+  app.get('/api/chat/welcome', (req, res) => {
+    try {
+      const welcome = rag.getWelcome();
+      return res.json({ welcome });
+    } catch (e) {
+      return res.json({ welcome: 'Hello — ask me anything about onboarding.' });
+    }
+  });
+} catch (e) {
+  console.warn('RAG module not available, /api/chat disabled', e && e.message);
+}
+
 app.get('/contract/:id/pdf', async (req, res) => {
   const c = contracts[req.params.id];
   if (!c) return res.status(404).send('Not found');
