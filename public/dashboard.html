@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Work Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="topbar"><div class="brand"><div class="brand__logo">OX</div><div class="brand__title">Work Dashboard (Demo)</div></div></div>
+    <div class="panel" style="max-width:780px; margin:18px auto">
+      <h3>Welcome to your demo work dashboard</h3>
+      <div id="content" class="muted">Loading...</div>
+    </div>
+  </div>
+  <script>
+    (function(){ const p=new URLSearchParams(window.location.search); const t=p.get('token'); const el=document.getElementById('content'); if (!t) { el.textContent='No token provided'; return; } el.innerHTML=`<div>Token: <span class="mono">${t}</span></div><div style="margin-top:8px">This dashboard would normally show tasks, links, and onboarding steps.</div>`; })();
+  </script>
+</body>
+</html>

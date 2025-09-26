@@ -29,10 +29,20 @@
             <div class="sig-actions">
               <button id="clear" class="btn secondary">Clear</button>
               <button id="submit" class="btn">Submit Signature</button>
+              <button id="accessBtn" class="btn secondary" style="display:none;margin-left:8px">Access Tools</button>
             </div>
           </div>
           <canvas id="sigPad"></canvas>
           <div id="status" class="small muted"></div>
+        </div>
+
+        <!-- Access Tools modal -->
+        <div id="accessModal" class="access-modal" style="display:none">
+          <div class="access-modal__card">
+            <h3>Access Tools</h3>
+            <div id="accessContent"></div>
+            <div style="margin-top:12px; text-align:right"><button id="accessClose" class="btn secondary">Close</button></div>
+          </div>
         </div>
       </div>
     </div>

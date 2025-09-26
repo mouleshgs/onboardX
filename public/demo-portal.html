@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Demo Portal</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2>Demo Portal</h2>
+      <p class="muted">This simple demo accepts a token and shows a welcome screen.</p>
+      <div id="content" style="text-align:left; margin-top:12px"></div>
+      <div style="margin-top:12px"><a href="/" class="btn secondary">Back</a></div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      const p = new URLSearchParams(window.location.search);
+      const token = p.get('token');
+      const el = document.getElementById('content');
+      if (!token) { el.innerHTML = '<div class="muted">No token provided in URL</div>'; return; }
+      el.innerHTML = `<div><strong>Token:</strong> <span class="mono">${token}</span></div><div style="margin-top:8px">You are now signed into the demo portal. This is a placeholder for the real product.</div>`;
+    })();
+  </script>
+</body>
+</html>
