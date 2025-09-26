@@ -61,18 +61,40 @@
       return r ? r.value : 'distributor';
     }
 
+    // Helper: determine authoritative role from Firestore users doc (by uid). Falls back to selectedRole.
+    async function resolveRoleAndStore(uid, email, chosenRole) {
+      try {
+        const ref = db.collection('users').doc(uid);
+        const snap = await ref.get();
+        if (snap && snap.exists) {
+          const data = snap.data() || {};
+          const roleFromDoc = data.role || chosenRole;
+          // keep user record updated
+          try { await ref.set({ email, role: roleFromDoc, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true }); } catch (e) { /* ignore */ }
+          localStorage.setItem('onboardx_user', JSON.stringify({ uid, role: roleFromDoc, email }));
+          return roleFromDoc;
+        }
+        // no doc present: persist chosen role
+        try { await ref.set({ email, role: chosenRole, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch (e) { /* ignore */ }
+        localStorage.setItem('onboardx_user', JSON.stringify({ uid, role: chosenRole, email }));
+        return chosenRole;
+      } catch (e) {
+        console.warn('resolveRole failed', e && e.message);
+        localStorage.setItem('onboardx_user', JSON.stringify({ uid, role: chosenRole, email }));
+        return chosenRole;
+      }
+    }
+
     document.getElementById('googleSign').addEventListener('click', async ()=>{
       const provider = new firebase.auth.GoogleAuthProvider();
       try {
         const res = await auth.signInWithPopup(provider);
         const idToken = await res.user.getIdToken();
-        const role = selectedRole();
-  const email = res.user.email || '';
-  localStorage.setItem('onboardx_user', JSON.stringify({ uid: res.user.uid, role, email }));
-  // write to Firestore users collection (demo)
-  try { await db.collection('users').doc(res.user.uid).set({ email, role, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch (e) { console.warn('Firestore write failed', e); }
-  // optional: post to server to register role (demo)
-  try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
+        const chosen = selectedRole();
+        const email = res.user.email || '';
+        const role = await resolveRoleAndStore(res.user.uid, email, chosen);
+        // optional: inform server about identity
+        try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
         if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
       } catch (e) { alert('Auth failed: '+e.message); }
     });
@@ -83,13 +105,12 @@
       if (!emailInput || !pw) return alert('email & password required');
       try {
         const res = await auth.createUserWithEmailAndPassword(emailInput, pw);
-        const idToken = await res.user.getIdToken();
-        const role = selectedRole();
-        const userEmail = (res.user && res.user.email) ? res.user.email : emailInput;
-        localStorage.setItem('onboardx_user', JSON.stringify({ uid: res.user.uid, role, email: userEmail }));
-        try { await db.collection('users').doc(res.user.uid).set({ email: userEmail, role, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e){ console.warn('Firestore write failed', e); }
-        try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
-        if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
+  const idToken = await res.user.getIdToken();
+  const chosen = selectedRole();
+  const userEmail = (res.user && res.user.email) ? res.user.email : emailInput;
+  const role = await resolveRoleAndStore(res.user.uid, userEmail, chosen);
+  try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
+  if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
       } catch (e) { alert('Signup failed: '+e.message); }
     });
 
@@ -99,13 +120,12 @@
       if (!emailInput || !pw) return alert('email & password required');
       try {
         const res = await auth.signInWithEmailAndPassword(emailInput, pw);
-        const idToken = await res.user.getIdToken();
-        const role = selectedRole();
-        const userEmail = (res.user && res.user.email) ? res.user.email : emailInput;
-        localStorage.setItem('onboardx_user', JSON.stringify({ uid: res.user.uid, role, email: userEmail }));
-        try { await db.collection('users').doc(res.user.uid).set({ email: userEmail, role, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); } catch(e){ console.warn('Firestore write failed', e); }
-        try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
-        if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
+  const idToken = await res.user.getIdToken();
+  const chosen = selectedRole();
+  const userEmail = (res.user && res.user.email) ? res.user.email : emailInput;
+  const role = await resolveRoleAndStore(res.user.uid, userEmail, chosen);
+  try { await fetch('/api/user/identify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idToken, role }) }); } catch(e){}
+  if (role === 'vendor') window.location.href = '/vendor.html'; else window.location.href = '/';
       } catch (e) { alert('Signin failed: '+e.message); }
     });
   </script>

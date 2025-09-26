@@ -81,14 +81,82 @@
         meta.appendChild(title); meta.appendChild(sub);
         const right = document.createElement('div'); right.style.marginLeft='auto';
         const distributor = document.createElement('div'); distributor.className='small muted'; distributor.textContent = `To: ${c.assignedToEmail || '—'}`;
+
+        // onboarding status indicator (will be updated after fetching access)
+        const statusWrap = document.createElement('div'); statusWrap.style.margin = '6px 8px 0 0';
+        statusWrap.className = 'small muted';
+        statusWrap.textContent = 'Checking onboarding...';
+
         const btn = document.createElement('button'); btn.className='btn'; btn.textContent = c.status === 'signed' ? 'View Signed' : 'View';
         btn.addEventListener('click', ()=>{
           // open Dropbox link or local via server
           if (c.storageUrl) window.open(c.storageUrl, '_blank'); else window.open(`/signed/${c.signedFile || c.file}`,'_blank');
         });
-        right.appendChild(distributor); right.appendChild(btn);
+
+        // Nudge button — always visible on vendor cards
+        const nudgeBtn = document.createElement('button');
+        nudgeBtn.className = 'btn secondary';
+        nudgeBtn.style.marginLeft = '8px';
+        nudgeBtn.textContent = 'Nudge Distributor';
+        nudgeBtn.addEventListener('click', async () => {
+          try {
+            nudgeBtn.disabled = true; nudgeBtn.textContent = 'Sending...';
+            // don't require server to supply message; server will choose sensible default
+            const payload = { from: document.getElementById('vendorEmail').value || 'vendor' };
+            const r = await fetch('/api/contract/' + encodeURIComponent(c.id) + '/nudge', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+            const j = await r.json();
+            if (r.ok && j && j.nudge) {
+              alert('Nudge sent to ' + (j.nudge.to || 'distributor') + '\n\n"' + j.nudge.message + '"');
+            } else {
+              alert('Failed to send nudge: ' + (j.error || j.detail || 'unknown'));
+            }
+          } catch (e) { alert('Network error'); }
+          nudgeBtn.disabled = false; nudgeBtn.textContent = 'Nudge Distributor';
+        });
+
+        right.appendChild(distributor);
+        right.appendChild(statusWrap);
+        right.appendChild(btn);
+        right.appendChild(nudgeBtn);
         card.appendChild(meta); card.appendChild(right);
         vendorContractsEl.appendChild(card);
+
+        // Try to fetch the contract access to determine onboarding progress.
+        // The server will return 403 if contract not signed yet; treat that as not started.
+        (async () => {
+          try {
+            const resp = await fetch('/api/contract/' + encodeURIComponent(c.id) + '/access');
+            if (!resp.ok) {
+              // if forbidden or not found, show not started
+              if (resp.status === 403 || resp.status === 404) {
+                statusWrap.textContent = 'Onboarding: not started';
+                statusWrap.className = 'small muted';
+                return;
+              }
+              statusWrap.textContent = 'Onboarding: unknown';
+              statusWrap.className = 'small muted';
+              return;
+            }
+            const j = await resp.json();
+            const access = j && j.access ? j.access : (j && j.ok && j.access) ? j.access : null;
+            if (!access) {
+              statusWrap.textContent = 'Onboarding: not started';
+              statusWrap.className = 'small muted';
+              return;
+            }
+            const prog = typeof access.progress === 'number' ? access.progress : (access && access.progress) ? Number(access.progress) : 0;
+            if (prog >= 100) {
+              statusWrap.textContent = 'Onboarding: completed ✅';
+              statusWrap.className = 'small success';
+            } else {
+              statusWrap.textContent = `Onboarding: ${prog}%`;
+              statusWrap.className = 'small muted';
+            }
+          } catch (e) {
+            statusWrap.textContent = 'Onboarding: unknown';
+            statusWrap.className = 'small muted';
+          }
+        })();
       });
     }
 

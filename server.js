@@ -7,7 +7,15 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const crypto = require('crypto');
-const { nanoid } = require('nanoid');
+// nanoid is an ESM package in newer versions; provide a tiny local fallback generator to avoid ESM require issues
+function nanoid(len = 8) {
+  // produce URL-safe base62-like id
+  const alph = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const bytes = crypto.randomBytes(len);
+  let out = '';
+  for (let i = 0; i < bytes.length; i++) out += alph[bytes[i] % alph.length];
+  return out;
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -54,9 +62,17 @@ async function generateAccessForContract(contractId, req) {
   // build tool links (prefer TOOL_BASE_URL env, otherwise derive from request)
   const base = process.env.TOOL_BASE_URL || (req ? `${req.protocol}://${req.get('host')}` : null) || '';
   const tools = [
-    { name: 'Demo Portal', url: `${base}/demo-portal?token=${token}` },
     { name: 'Work Dashboard', url: `${base}/dashboard?token=${token}` }
   ];
+
+  // Add the public Notion onboarding course link so distributors can open the course from Access Tools
+  try {
+    const notionLink = 'https://www.notion.so/AI-Onboarding-Course-27aaf52b342580278af7e58011e55dea?showMoveTo=true&saveParent=true';
+    // put the onboarding course near the top of the tools list
+    tools.unshift({ name: 'Onboarding Course', url: notionLink });
+  } catch (e) {
+    // non-fatal if URL construction somehow fails
+  }
 
   const access = {
     unlocked: true,
@@ -65,8 +81,24 @@ async function generateAccessForContract(contractId, req) {
     credentials: { username, password, token },
     tools,
     slackNotified: false,
-    webhookNotified: false
+    webhookNotified: false,
+    events: c.events || { slackVisited: false, notionCompleted: false }
   };
+
+  // compute progress: signature verified = 30%, slackVisited = +20%, notionCompleted = +50% (caps at 100)
+  try {
+    let progress = 0;
+    if (c.status === 'signed') progress += 30;
+    if (c.events && c.events.slackVisited) progress += 20;
+    if (c.events && c.events.notionCompleted) progress += 50;
+    if (progress > 100) progress = 100;
+    access.progress = progress;
+  } catch (e) {
+    access.progress = 0;
+  }
+
+  // Initialize simple event tracker if not present
+  if (!c.events) c.events = { slackVisited: false, notionCompleted: false };
 
   // Slack invite link support:
   // 1) If operator provides SLACK_JOIN_LINK in .env, include it as the Slack workspace invite link.
@@ -592,9 +624,19 @@ app.post('/api/sign', async (req, res) => {
     const lastPage = pages[pages.length - 1];
     const { width, height } = lastPage.getSize();
 
-    // draw signature at bottom
+    // draw signature image at bottom
     lastPage.drawImage(img, { x: 50, y: 80, width: 200, height: 80 });
-    lastPage.drawText(name, { x: 50, y: 60, size: 10 });
+    // add a small 'Signature' label and the printed name beneath it
+    try {
+      const helv = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      // label above the name, a bit below the image
+      lastPage.drawText('Signature', { x: 50, y: 66, size: 10, font: helv });
+      // printed name below the label
+      lastPage.drawText(name, { x: 50, y: 52, size: 10, font: helv });
+    } catch (e) {
+      // fallback: draw name only if font embedding fails
+      lastPage.drawText(name, { x: 50, y: 60, size: 10 });
+    }
 
     const signedPdfBytes = await pdfDoc.save();
 
@@ -692,8 +734,189 @@ app.get('/api/contract/:id/access', async (req, res) => {
   }
 });
 
+// Record a simple event for a contract (e.g. slack_visited, notion_completed)
+app.post('/api/contract/:id/event', express.json(), async (req, res) => {
+  const id = req.params.id;
+  const c = contracts[id];
+  if (!c) return res.status(404).json({ error: 'Not found' });
+  const { event } = req.body || {};
+  if (!event) return res.status(400).json({ error: 'event required' });
+  if (!c.events) c.events = { slackVisited: false, notionCompleted: false };
+  if (event === 'slack_visited') c.events.slackVisited = true;
+  if (event === 'notion_completed') c.events.notionCompleted = true;
+  // recompute access progress
+  recomputeProgress(c);
+  // persist to Firestore if available
+  if (firestore) {
+    try { await firestore.collection('contracts').doc(id).update({ events: c.events }); } catch (e) { console.warn('Failed to persist events to Firestore', e && e.message); }
+  }
+  return res.json({ ok: true, events: c.events });
+});
+
+// Helper to recompute and persist access.progress based on current contract state
+function recomputeProgress(c) {
+  let progress = 0;
+  // New weights per user request: signature = 30%, slack click = 10%, notion completion = 60%.
+  if (c.status === 'signed') progress += 30;
+  if (c.events && c.events.slackVisited) progress += 10;
+  if (c.events && c.events.notionCompleted) progress += 60;
+  if (progress > 100) progress = 100;
+  if (!c.access) c.access = {};
+  c.access.progress = progress;
+  return progress;
+}
+
+// In-memory nudges store for demo (non-persistent)
+const nudges = [];
+
+// Vendor posts a nudge for a specific contract. Server selects default message when none provided.
+app.post('/api/contract/:id/nudge', express.json(), async (req, res) => {
+  const id = req.params.id;
+  const c = contracts[id];
+  if (!c) return res.status(404).json({ error: 'Not found' });
+  try {
+    let message = (req.body && req.body.message) || '';
+    // default message selection
+    if (!message) {
+      if (c.status !== 'signed') {
+        message = 'Please start the Signing process';
+      } else {
+        // ensure we have access/progress computed
+        let access = c.access && c.access.unlocked ? c.access : null;
+        if (!access && c.status === 'signed') {
+          try { access = await generateAccessForContract(id, req); } catch (e) { access = null; }
+        }
+        const prog = access && typeof access.progress === 'number' ? access.progress : 0;
+        if (prog >= 100) message = 'Congrats for Completion of Onboarding; moving to Distribution phase';
+        else message = 'Please complete the training soon';
+      }
+    }
+
+    const n = {
+      id: 'nudge-' + nanoid(6),
+      contractId: id,
+      from: (req.body && req.body.from) || c.vendorEmail || 'vendor',
+      to: c.assignedToEmail || (req.body && req.body.to) || null,
+      message,
+      createdAt: new Date().toISOString(),
+      read: false
+    };
+    nudges.push(n);
+
+    // persist to Firestore if available (best-effort)
+    if (firestore) {
+      try { await firestore.collection('nudges').doc(n.id).set(n); } catch (e) { /* ignore */ }
+    }
+
+    return res.json({ ok: true, nudge: n });
+  } catch (e) {
+    console.error('Nudge creation failed', e && e.message);
+    return res.status(500).json({ error: 'nudge failed', detail: (e && e.message) || String(e) });
+  }
+});
+
+// List notifications for a specific recipient email
+app.get('/api/notifications', (req, res) => {
+  const email = (req.query && req.query.email) ? String(req.query.email).toLowerCase() : null;
+  if (!email) return res.status(400).json({ error: 'email required' });
+  const list = nudges.filter(n => n.to && String(n.to).toLowerCase() === email).slice().sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const unreadCount = list.filter(n => !n.read).length;
+  return res.json({ ok: true, notifications: list, unreadCount });
+});
+
+// Mark given notification ids as read
+app.post('/api/notifications/mark-read', express.json(), async (req, res) => {
+  const ids = (req.body && Array.isArray(req.body.ids)) ? req.body.ids : null;
+  if (!ids) return res.status(400).json({ error: 'ids required' });
+  const marked = [];
+  for (const id of ids) {
+    const idx = nudges.findIndex(n => n.id === id);
+    if (idx !== -1) {
+      nudges[idx].read = true;
+      marked.push(nudges[idx]);
+      if (firestore) {
+        try { await firestore.collection('nudges').doc(id).update({ read: true }); } catch (e) { /* ignore */ }
+      }
+    }
+  }
+  return res.json({ ok: true, marked });
+});
+
+// Verify Slack membership for the assigned email in a configured channel. Requires SLACK_BOT_TOKEN and SLACK_CHECK_CHANNEL_ID.
+app.post('/api/contract/:id/check-slack', express.json(), async (req, res) => {
+  const id = req.params.id; const c = contracts[id]; if (!c) return res.status(404).json({ error: 'Not found' });
+  if (!process.env.SLACK_BOT_TOKEN || !process.env.SLACK_CHECK_CHANNEL_ID) return res.status(400).json({ error: 'Slack verification not configured' });
+  if (!c.assignedToEmail) return res.status(400).json({ error: 'No assigned email' });
+  try {
+    const fetch = require('node-fetch');
+    // lookup user by email
+    const resp = await fetch('https://slack.com/api/users.lookupByEmail', { method: 'GET', headers: { 'Authorization': `Bearer ${process.env.SLACK_BOT_TOKEN}` , 'Content-Type':'application/x-www-form-urlencoded' }, qs: null + '' });
+    // node-fetch doesn't support qs; we'll call with URL params
+    const url = `https://slack.com/api/users.lookupByEmail?email=${encodeURIComponent(c.assignedToEmail)}`;
+    const r2 = await fetch(url, { method: 'GET', headers: { 'Authorization': `Bearer ${process.env.SLACK_BOT_TOKEN}` } });
+    const jr = await r2.json();
+    if (!jr || !jr.ok || !jr.user) return res.json({ ok: true, slackJoined: false, reason: 'user_not_found' });
+    const userId = jr.user.id;
+    // fetch members of the configured channel (may be large; use cursor pagination)
+    const channel = process.env.SLACK_CHECK_CHANNEL_ID;
+    let cursor = undefined; let found = false;
+    do {
+      const q = cursor ? `?channel=${channel}&cursor=${cursor}` : `?channel=${channel}`;
+      const membersRes = await fetch(`https://slack.com/api/conversations.members${q}`, { method: 'GET', headers: { 'Authorization': `Bearer ${process.env.SLACK_BOT_TOKEN}` } });
+      const jm = await membersRes.json();
+      if (!jm || !jm.ok) break;
+      if (jm.members && jm.members.indexOf(userId) !== -1) { found = true; break; }
+      cursor = jm.response_metadata && jm.response_metadata.next_cursor ? jm.response_metadata.next_cursor : undefined;
+    } while (cursor);
+    if (found) {
+      if (!c.events) c.events = {}; c.events.slackVisited = true; recomputeProgress(c);
+      if (firestore) { try { await firestore.collection('contracts').doc(id).update({ events: c.events, access: c.access }); } catch (e) {} }
+      return res.json({ ok: true, slackJoined: true, progress: c.access.progress });
+    }
+    return res.json({ ok: true, slackJoined: false, progress: c.access.progress });
+  } catch (e) {
+    console.error('Slack check failed', e && e.message);
+    return res.status(500).json({ error: 'Slack check failed' });
+  }
+});
+
+// Check Notion database for a completion flag for the assigned user. Requires NOTION_API_KEY and NOTION_DATABASE_ID.
+app.get('/api/contract/:id/check-notion', async (req, res) => {
+  const id = req.params.id; const c = contracts[id]; if (!c) return res.status(404).json({ error: 'Not found' });
+  if (!process.env.NOTION_API_KEY || !process.env.NOTION_DATABASE_ID) return res.status(400).json({ error: 'Notion integration not configured' });
+  if (!c.assignedToEmail) return res.status(400).json({ error: 'No assigned email' });
+  try {
+    const fetch = require('node-fetch');
+    const url = `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`;
+    const body = { filter: { property: 'Email', rich_text: { equals: c.assignedToEmail } } };
+    const resp = await fetch(url, { method: 'POST', headers: { 'Authorization': `Bearer ${process.env.NOTION_API_KEY}`, 'Notion-Version': '2022-06-28', 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+    const jr = await resp.json();
+    if (!jr || !jr.results) return res.status(500).json({ error: 'Notion query failed' });
+    let completed = false;
+    for (const p of jr.results) {
+      // expect a checkbox property named 'Completed' or similar
+      const props = p.properties || {};
+      if (props.Completed && props.Completed.type === 'checkbox' && props.Completed.checkbox === true) { completed = true; break; }
+      // alternative: look for a property named 'Done' or 'Finished'
+      if (props.Done && props.Done.type === 'checkbox' && props.Done.checkbox === true) { completed = true; break; }
+    }
+    if (completed) { if (!c.events) c.events = {}; c.events.notionCompleted = true; recomputeProgress(c); if (firestore) { try { await firestore.collection('contracts').doc(id).update({ events: c.events, access: c.access }); } catch (e) {} } }
+    return res.json({ ok: true, notionCompleted: completed, progress: c.access.progress });
+  } catch (e) {
+    console.error('Notion check failed', e && e.message);
+    return res.status(500).json({ error: 'Notion check failed' });
+  }
+});
+
 app.get('/signed/:name', (req, res) => {
   const p = path.join(DATA_DIR, req.params.name);
+  if (!fs.existsSync(p)) return res.status(404).send('Not found');
+  res.sendFile(p);
+});
+
+// Serve dashboard page at /dashboard (friendly URL without .html)
+app.get('/dashboard', (req, res) => {
+  const p = path.join(__dirname, 'public', 'dashboard.html');
   if (!fs.existsSync(p)) return res.status(404).send('Not found');
   res.sendFile(p);
 });

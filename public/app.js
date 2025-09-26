@@ -20,6 +20,7 @@
   const accessModal = el('accessModal');
   const accessContent = el('accessContent');
   const accessClose = el('accessClose');
+  const refreshBtn = el('refreshBtn');
 
   const signedCountEl = el('signedCount');
 
@@ -42,6 +43,131 @@
   logoutBtn.addEventListener('click', ()=>{ localStorage.removeItem('onboardx_user'); window.location.replace('/login.html'); });
   const topbar = document.querySelector('.topbar');
   if (topbar) topbar.appendChild(logoutBtn);
+
+  // Minimal notification bell (top-right) — purely UI, no server calls
+  // Creates a bell button with an unread count badge. Non-intrusive and safe.
+  try {
+    if (topbar) {
+      const notifWrap = document.createElement('div');
+      notifWrap.style.display = 'inline-block';
+      notifWrap.style.position = 'relative';
+      notifWrap.style.marginLeft = '12px';
+
+      const bell = document.createElement('button');
+      bell.className = 'btn';
+      bell.title = 'Notifications';
+      bell.style.padding = '6px 8px';
+      bell.style.fontSize = '16px';
+      bell.textContent = '🔔';
+
+      const badge = document.createElement('span');
+      badge.style.position = 'absolute';
+      badge.style.top = '-6px';
+      badge.style.right = '-6px';
+      badge.style.minWidth = '18px';
+      badge.style.height = '18px';
+      badge.style.lineHeight = '18px';
+      badge.style.borderRadius = '9px';
+      badge.style.background = '#e11d48';
+      badge.style.color = '#fff';
+      badge.style.fontSize = '12px';
+      badge.style.textAlign = 'center';
+      badge.style.padding = '0 5px';
+      badge.style.display = 'none'; // hidden when zero
+      badge.textContent = '0';
+
+      notifWrap.appendChild(bell);
+      notifWrap.appendChild(badge);
+      topbar.appendChild(notifWrap);
+
+      // Expose a helper to update the badge from other scripts if needed
+      window.__onboardx_setNotifCount = function(n) {
+        try {
+          const count = Number(n) || 0;
+          if (count <= 0) { badge.style.display = 'none'; }
+          else { badge.style.display = 'inline-block'; badge.textContent = String(count > 99 ? '99+' : count); }
+        } catch (e) {}
+      };
+      // create notifications modal (hidden)
+      const notifModal = document.createElement('div');
+      notifModal.style.position = 'fixed';
+      notifModal.style.left = '0';
+      notifModal.style.top = '0';
+      notifModal.style.width = '100%';
+      notifModal.style.height = '100%';
+      notifModal.style.display = 'none';
+      notifModal.style.alignItems = 'center';
+      notifModal.style.justifyContent = 'center';
+      notifModal.style.background = 'rgba(0,0,0,0.4)';
+      notifModal.style.zIndex = '9999';
+      notifModal.innerHTML = `<div style="max-width:640px;width:90%;background:#fff;border-radius:8px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,0.2)">` +
+        `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><strong>Notifications</strong><button id="__notifClose" class="btn secondary">Close</button></div>` +
+        `<div id="__notifList" style="max-height:360px;overflow:auto"></div>` +
+        `<div style="text-align:right;margin-top:12px"><button id="__markRead" class="btn">Mark all read</button></div>` +
+        `</div>`;
+      document.body.appendChild(notifModal);
+      const notifListEl = notifModal.querySelector('#__notifList');
+      const notifClose = notifModal.querySelector('#__notifClose');
+      const markReadBtn = notifModal.querySelector('#__markRead');
+
+      let __lastNotifications = [];
+
+      async function fetchNotifications() {
+        try {
+          const raw = localStorage.getItem('onboardx_user');
+          const user = raw ? JSON.parse(raw) : null;
+          const email = user && user.email ? user.email : null;
+          if (!email) return;
+          const q = new URLSearchParams({ email });
+          const r = await fetch('/api/notifications?' + q.toString());
+          if (!r.ok) return;
+          const j = await r.json();
+          const list = (j && j.notifications) ? j.notifications : [];
+          __lastNotifications = list;
+          // update badge
+          const unread = (j && typeof j.unreadCount === 'number') ? j.unreadCount : list.filter(n=>!n.read).length;
+          window.__onboardx_setNotifCount(unread);
+          // populate modal list if open
+          if (notifModal.style.display !== 'none') {
+            notifListEl.innerHTML = '';
+            if (!list.length) notifListEl.innerHTML = '<div class="muted">No notifications</div>';
+            list.forEach(n => {
+              const item = document.createElement('div'); item.className = 'card';
+              const who = document.createElement('div'); who.className = 'small muted'; who.textContent = `From: ${n.from || 'vendor'} • ${new Date(n.createdAt).toLocaleString()}`;
+              const msg = document.createElement('div'); msg.style.marginTop = '6px'; msg.textContent = n.message || '';
+              if (!n.read) { item.style.borderLeft = '4px solid #e11d48'; item.style.paddingLeft = '8px'; }
+              item.appendChild(who); item.appendChild(msg); notifListEl.appendChild(item);
+            });
+          }
+        } catch (e) { console.warn('fetchNotifications failed', e && e.message); }
+      }
+
+      // open modal when bell clicked
+      bell.addEventListener('click', async ()=>{
+        notifModal.style.display = 'flex';
+        await fetchNotifications();
+      });
+
+      notifClose.addEventListener('click', ()=>{ notifModal.style.display = 'none'; });
+
+      // mark all read
+      markReadBtn.addEventListener('click', async ()=>{
+        try {
+          const ids = (__lastNotifications || []).map(n => n.id).filter(Boolean);
+          if (!ids.length) return;
+          await fetch('/api/notifications/mark-read', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ ids }) });
+          // refresh
+          await fetchNotifications();
+        } catch (e) { console.warn('markRead failed', e && e.message); }
+      });
+
+      // poll unread count periodically
+      setInterval(()=>{ fetchNotifications(); }, 10000);
+    }
+  } catch (e) {
+    // fail silently — UI augmentation should never break the page
+    console.warn('Notification bell init failed', e && e.message);
+  }
 
   // signature pad
   const canvas = el('sigPad');
@@ -112,11 +238,26 @@
     pdfFrame.src = `/contract/${c.id}/pdf`;
     pdfFrame.dataset.contractId = c.id;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // show Access Tools button when contract is signed
+    // show Access Tools button when contract is signed and hide signature form
+    const sigCard = document.querySelector('.sig-card');
+    // If signed: hide canvas and submit, show only access button and a View Signed PDF button
     if (c.status === 'signed') {
       accessBtn.style.display = 'inline-block';
+      // hide signature controls
+      sigCard.classList.add('signed');
+      // add a view signed button if not present
+      if (!document.getElementById('viewSigned')) {
+        const viewBtn = document.createElement('button');
+        viewBtn.id = 'viewSigned'; viewBtn.className = 'btn secondary'; viewBtn.textContent = 'View Signed PDF';
+        viewBtn.style.marginLeft = '8px';
+        viewBtn.addEventListener('click', ()=>{ window.open(pdfFrame.src, '_blank'); });
+        const actions = document.querySelector('.sig-actions');
+        actions.appendChild(viewBtn);
+      }
     } else {
       accessBtn.style.display = 'none';
+      sigCard.classList.remove('signed');
+      const vs = document.getElementById('viewSigned'); if (vs) vs.remove();
     }
   }
 
@@ -131,6 +272,8 @@
       const j = await r.json();
       if (r.ok) {
         statusDiv.innerHTML = `<strong>Signed</strong><div class="mono">SHA-256: ${j.metadata.sha256}</div>`;
+        // reload the page once after successful signing so UI updates and user sees signed state
+        setTimeout(() => { try { window.location.reload(); } catch (e) {} }, 600);
       } else {
         statusDiv.textContent = 'Error: ' + (j.error || j.detail || 'unknown');
       }
@@ -155,14 +298,68 @@
       }
       const a = j.access;
       const div = document.createElement('div'); div.className = 'access-list';
-      const cred = document.createElement('div'); cred.className = 'access-item'; cred.innerHTML = `<div><strong>Username:</strong> <span class="mono">${a.credentials.username}</span></div><div><strong>Password:</strong> <span class="mono">${a.credentials.password}</span></div><div><strong>Token:</strong> <span class="mono">${a.credentials.token}</span></div>`;
+      // show a circular progress tracker
+      const tracker = document.createElement('div'); tracker.className = 'tracker'; tracker.innerHTML = `<div class="tracker-ring"><svg viewBox="0 0 36 36"><path class="bg" d="M18 2.0845a15.9155 15.9155 0 1 1 0 31.831"/><path class="progress" stroke-dasharray="${a.progress},100" d="M18 2.0845a15.9155 15.9155 0 1 1 0 31.831"/></svg></div><div class="tracker-label"><strong>${a.progress}%</strong><div class="small muted">Onboarding progress</div></div>`;
+      div.appendChild(tracker);
+
+      // show credentials area only as a small note (we're switching to tracker-centric UX)
+      const cred = document.createElement('div'); cred.className = 'access-item'; cred.innerHTML = `<div class="small muted">Credentials are available in the portal once you proceed.</div>`;
       div.appendChild(cred);
+
+      // render tools and wire events: if a tool is Slack Workspace, mark slack_visited when clicked
       a.tools.forEach(t => {
-        const it = document.createElement('div'); it.className = 'access-item'; it.innerHTML = `<strong>${t.name}</strong><div><a href="${t.url}" target="_blank">Open ${t.name}</a></div>`;
+        const it = document.createElement('div'); it.className = 'access-item';
+        const link = document.createElement('a'); link.href = t.url; link.target = '_blank'; link.textContent = `Open ${t.name}`;
+        link.addEventListener('click', async (ev) => {
+          // If Slack, open link and immediately mark slack_visited (user requested instant +10%)
+          if (/slack/i.test(t.name)) {
+            window.open(t.url, '_blank');
+            try {
+              await fetch(`/api/contract/${id}/event`, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ event: 'slack_visited' }) });
+            } catch (e) {}
+            // refresh access modal to show updated progress
+            setTimeout(()=> accessBtn.click(), 300);
+          } else if (/work dashboard/i.test(t.name)) {
+            // Only allow opening Work Dashboard when progress is 100%
+            if (a.progress === 100) {
+              window.open(t.url, '_blank');
+            } else {
+              alert('Please complete the onboarding process to access the Work Dashboard.');
+            }
+          } else {
+            window.open(t.url, '_blank');
+          }
+        });
+        it.innerHTML = `<strong>${t.name}</strong><div></div>`;
+        it.querySelector('div').appendChild(link);
+        // If the tool is the Onboarding Course (Notion), add a 'Mark Course Completed' button
+        if (/onboarding course/i.test(t.name)) {
+          // restore a manual 'Mark Course Completed' button so the user can mark complete for now
+          const mark = document.createElement('button'); mark.className = 'btn small'; mark.style.marginLeft='8px'; mark.textContent = 'Mark Course Completed';
+          mark.addEventListener('click', async ()=>{
+            try {
+              await fetch(`/api/contract/${id}/event`, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ event: 'notion_completed' }) });
+              doConfetti();
+              setTimeout(()=> accessBtn.click(), 300);
+            } catch (e) { alert('Failed to mark course completed'); }
+          });
+          it.querySelector('div').appendChild(mark);
+        }
         div.appendChild(it);
       });
+
       accessContent.innerHTML = '';
       accessContent.appendChild(div);
+      // animate confetti if progress increased beyond previous stored (store previous in dataset)
+      try {
+        const prev = parseInt(accessModal.dataset.prevProgress || '0', 10);
+        if (a.progress > prev) { doConfetti(); }
+        accessModal.dataset.prevProgress = String(a.progress);
+        // if progress just reached 100, alert the user to click Work Dashboard
+        if (a.progress === 100 && prev < 100) {
+          setTimeout(()=> alert('Onboarding 100% complete — click "Work Dashboard" to open your analytics.'), 500);
+        }
+      } catch (e) {}
       // refresh contracts view so vendor can see unlocked status
       await loadContracts();
     } catch (e) {
@@ -171,6 +368,20 @@
   });
 
   accessClose.addEventListener('click', ()=>{ accessModal.style.display = 'none'; });
+
+  // refresh button handler
+  if (refreshBtn) refreshBtn.addEventListener('click', async ()=>{ refreshBtn.disabled = true; refreshBtn.textContent = 'Refreshing...'; await loadContracts(); refreshBtn.textContent = 'Refresh'; refreshBtn.disabled = false; });
+
+  // simple confetti effect (small, dependency-free)
+  function doConfetti() {
+    for (let i=0;i<30;i++) {
+      const el = document.createElement('div'); el.className = 'confetti';
+      el.style.left = (20 + Math.random()*60) + '%';
+      el.style.background = ['#ff6b6b','#ffd93d','#6bf178','#6bb4ff','#c38cff'][Math.floor(Math.random()*5)];
+      document.body.appendChild(el);
+      setTimeout(()=> el.remove(), 2500);
+    }
+  }
 
   await loadContracts();
 })();
