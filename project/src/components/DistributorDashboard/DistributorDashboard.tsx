@@ -3,6 +3,7 @@ import { RefreshCw, Search } from 'lucide-react';
 import { TopBar } from '../Layout/TopBar';
 import { useAuth } from '../../hooks/useAuth';
 import type { Contract } from '../../types';
+import FloatingRagButton from '../Common/FloatingRagButton';
 
 export function DistributorDashboard() {
   const { user, logout } = useAuth();
@@ -124,6 +125,7 @@ export function DistributorDashboard() {
           </div>
         )}
       </div>
+      <FloatingRagButton />
     </div>
   );
 }

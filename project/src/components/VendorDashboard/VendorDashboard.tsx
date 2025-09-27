@@ -3,6 +3,7 @@ import { useContracts } from '../../hooks/useContracts';
 import { TopBar } from '../Layout/TopBar';
 import { ContractUpload } from '../ContractUpload/ContractUpload';
 import { ContractList } from '../ContractList/ContractList';
+import FloatingRagButton from '../Common/FloatingRagButton';
 
 export function VendorDashboard() {
   const { user, logout } = useAuth();
@@ -33,6 +34,7 @@ export function VendorDashboard() {
           onRefresh={refetch}
         />
       </div>
+        <FloatingRagButton />
     </div>
   );
 }
