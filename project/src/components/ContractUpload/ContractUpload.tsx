@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Upload, FileText } from 'lucide-react';
 import type { UploadResponse } from '../../types';
 import api from '../../api';
+import showToast from '../../utils/toast';
 
 interface ContractUploadProps {
   vendorEmail: string;
@@ -16,12 +17,12 @@ export function ContractUpload({ vendorEmail, onUploadSuccess }: ContractUploadP
 
   const handleSubmit = async () => {
     if (!distributorEmail.trim()) {
-      alert('Distributor email required');
+      showToast('Distributor email required', 'warn');
       return;
     }
     
     if (!file) {
-      alert('Select a PDF file');
+      showToast('Select a PDF file', 'warn');
       return;
     }
 

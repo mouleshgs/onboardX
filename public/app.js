@@ -1,4 +1,13 @@
 (async function(){
+  // lightweight toast for static pages
+  function showToast(msg, type) {
+    try {
+      const id = '__onboardx_toast';
+      let container = document.getElementById(id);
+      if (!container) { container = document.createElement('div'); container.id = id; container.style.position = 'fixed'; container.style.right = '20px'; container.style.top = '20px'; container.style.zIndex = '999999'; container.style.display = 'flex'; container.style.flexDirection = 'column'; container.style.gap = '8px'; document.body.appendChild(container); }
+      const el = document.createElement('div'); el.textContent = msg; el.style.padding = '10px 12px'; el.style.borderRadius = '8px'; el.style.maxWidth = '360px'; el.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)'; el.style.fontSize = '14px'; el.style.background = (type === 'success') ? '#dcfce7' : (type === 'error') ? '#fee2e2' : (type === 'warn') ? '#fff7ed' : '#f3f4f6'; container.appendChild(el); setTimeout(()=>{ try { el.remove(); } catch(e){} }, 4200);
+    } catch (e) { try { alert(msg); } catch(e){} }
+  }
   // Enforce simple role-based routing: distributor users can access this page.
   try {
     const raw = localStorage.getItem('onboardx_user');
@@ -263,6 +272,15 @@
       accessBtn.style.display = 'inline-block';
       // hide signature controls
       sigCard.classList.add('signed');
+      // show SHA if previously stored locally (persisted after signing)
+      try {
+        const stored = localStorage.getItem(`onboardx_sha_${c.id}`);
+        if (stored) {
+          statusDiv.innerHTML = `<strong>Signed</strong><div class="mono">SHA-256: ${stored}</div>`;
+        } else {
+          statusDiv.innerHTML = `<strong>Signed</strong>`;
+        }
+      } catch (e) { statusDiv.innerHTML = `<strong>Signed</strong>`; }
       // add a view signed button if not present
       if (!document.getElementById('viewSigned')) {
         const viewBtn = document.createElement('button');
@@ -276,6 +294,7 @@
       accessBtn.style.display = 'none';
       sigCard.classList.remove('signed');
       const vs = document.getElementById('viewSigned'); if (vs) vs.remove();
+      statusDiv.textContent = '';
     }
   }
 
@@ -289,7 +308,13 @@
       const r = await fetch('/api/sign', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
       const j = await r.json();
       if (r.ok) {
-        statusDiv.innerHTML = `<strong>Signed</strong><div class="mono">SHA-256: ${j.metadata.sha256}</div>`;
+        // Persist SHA locally so distributor UI can display it later when reopening
+        try { if (j && j.metadata && j.metadata.sha256) localStorage.setItem(`onboardx_sha_${payload.contractId}`, j.metadata.sha256); } catch (e) {}
+        if (j && j.metadata && j.metadata.sha256) {
+          statusDiv.innerHTML = `<strong>Signed</strong><div class="mono">SHA-256: ${j.metadata.sha256}</div>`;
+        } else {
+          statusDiv.innerHTML = `<strong>Signed</strong>`;
+        }
         // reload the page once after successful signing so UI updates and user sees signed state
         setTimeout(() => { try { window.location.reload(); } catch (e) {} }, 600);
       } else {
@@ -342,7 +367,7 @@
             if (a.progress === 100) {
               window.open(t.url, '_blank');
             } else {
-              alert('Please complete the onboarding process to access the Work Dashboard.');
+              showToast('Please complete the onboarding process to access the Work Dashboard.', 'warn');
             }
           } else {
             window.open(t.url, '_blank');
@@ -359,7 +384,7 @@
               await fetch(`/api/contract/${id}/event`, { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ event: 'notion_completed' }) });
               doConfetti();
               setTimeout(()=> accessBtn.click(), 300);
-            } catch (e) { alert('Failed to mark course completed'); }
+            } catch (e) { showToast('Failed to mark course completed', 'error'); }
           });
           it.querySelector('div').appendChild(mark);
         }
@@ -375,7 +400,7 @@
         accessModal.dataset.prevProgress = String(a.progress);
         // if progress just reached 100, alert the user to click Work Dashboard
         if (a.progress === 100 && prev < 100) {
-          setTimeout(()=> alert('Onboarding 100% complete — click "Work Dashboard" to open your analytics.'), 500);
+          setTimeout(()=> showToast('Onboarding 100% complete — click "Work Dashboard" to open your analytics.', 'success'), 500);
         }
       } catch (e) {}
       // refresh contracts view so vendor can see unlocked status

@@ -41,14 +41,43 @@
   </div>
   <script>
     function logout(){ localStorage.removeItem('onboardx_user'); window.location.href = '/login.html'; }
+      // simple toast for legacy static page
+      function showToast(msg, type) {
+        try {
+          const id = '__onboardx_toast_static';
+          let container = document.getElementById(id);
+          if (!container) { 
+            container = document.createElement('div'); 
+            container.id = id; 
+            container.style.position = 'fixed'; 
+            container.style.right = '20px'; 
+            container.style.top = '20px'; 
+            container.style.zIndex = '999999'; 
+            container.style.display = 'flex'; 
+            container.style.flexDirection = 'column'; 
+            container.style.gap = '8px'; 
+            document.body.appendChild(container); 
+          }
+          const el = document.createElement('div'); 
+          el.textContent = msg; 
+          el.style.padding = '10px 12px'; 
+          el.style.borderRadius = '8px'; 
+          el.style.maxWidth = '360px'; 
+          el.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)'; 
+          el.style.fontSize = '14px'; 
+          el.style.background = (type === 'success') ? '#dcfce7' : (type === 'error') ? '#fee2e2' : (type === 'warn') ? '#fff7ed' : '#f3f4f6'; 
+          container.appendChild(el); 
+          setTimeout(()=>{ try { el.remove(); } catch(e){} }, 4200);
+        } catch (e) { try { alert(msg); } catch (e) {} }
+      }
     (function(){ try{ const raw = localStorage.getItem('onboardx_user'); if (!raw) return window.location.replace('/login.html'); const u = JSON.parse(raw); if (u.role !== 'vendor') window.location.replace('/'); if (u.email) document.getElementById('vendorEmail').value = u.email; } catch(e){ window.location.replace('/login.html'); }})();
 
     document.getElementById('sendBtn').addEventListener('click', async ()=>{
       const dist = document.getElementById('distEmail').value.trim();
       const vendor = document.getElementById('vendorEmail').value.trim() || 'vendor@local';
       const f = document.getElementById('fileInput').files[0];
-      if (!dist) return alert('distributor email required');
-      if (!f) return alert('select a PDF file');
+    if (!dist) { showToast('distributor email required','warn'); return; }
+    if (!f) { showToast('select a PDF file','warn'); return; }
       const fd = new FormData();
       fd.append('file', f);
       fd.append('distributorEmail', dist);
@@ -58,8 +87,10 @@
       const j = await res.json();
       if (res.ok) {
         document.getElementById('result').innerHTML = `<div>Uploaded. Contract id: ${j.id} ${j.storageUrl ? `<div><a href="${j.storageUrl}" target="_blank">Open in Dropbox</a></div>` : ''}</div>`;
+          showToast('Uploaded successfully', 'success');
       } else {
         document.getElementById('result').textContent = 'Error: ' + (j.error || j.detail || 'unknown');
+          showToast('Upload failed', 'error');
       }
     });
 
@@ -106,9 +137,9 @@
             const r = await fetch('/api/contract/' + encodeURIComponent(c.id) + '/nudge', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
             const j = await r.json();
             if (r.ok && j && j.nudge) {
-              alert('Nudge sent to ' + (j.nudge.to || 'distributor') + '\n\n"' + j.nudge.message + '"');
+            showToast('Nudge sent to ' + (j.nudge.to || 'distributor') + ': "' + j.nudge.message + '"', 'success');
             } else {
-              alert('Failed to send nudge: ' + (j.error || j.detail || 'unknown'));
+            showToast('Failed to send nudge: ' + (j.error || j.detail || 'unknown'), 'error');
             }
           } catch (e) { alert('Network error'); }
           nudgeBtn.disabled = false; nudgeBtn.textContent = 'Nudge Distributor';

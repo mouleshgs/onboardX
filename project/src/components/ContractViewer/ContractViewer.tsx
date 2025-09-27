@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import CircularProgress from '../CircularProgress/CircularProgress';
 import type { Contract, ContractAccess } from '../../types';
 import api, { API_BASE } from '../../api';
+import showToast from '../../utils/toast';
 import { TopBar } from '../Layout/TopBar';
 
 interface Props {
@@ -17,6 +18,7 @@ export function ContractViewer({ contractId }: Props) {
   const [signing, setSigning] = useState(false);
   const [access, setAccess] = useState<ContractAccess | null>(null);
   const [signedCompleted, setSignedCompleted] = useState(false);
+  const [sha, setSha] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const drawing = useRef(false);
@@ -46,6 +48,12 @@ export function ContractViewer({ contractId }: Props) {
       if (data && data.status === 'signed') setSignedCompleted(true);
       // if contract already has access, fetch it
       if (data && data.access && data.access.unlocked) setAccess(data.access);
+      // try to recover persisted SHA from localStorage (static UI also stores it there)
+      try {
+        const key = `onboardx_sha_${data && data.id}`;
+        const stored = key ? localStorage.getItem(key) : null;
+        if (stored) setSha(stored);
+      } catch (e) {}
     } catch (e: any) {
       setError(e && e.message ? e.message : 'Unknown error');
     } finally {
@@ -97,6 +105,13 @@ export function ContractViewer({ contractId }: Props) {
       const j = await resp.json();
       // server returns metadata and possibly access
       const meta = j && j.metadata;
+      // persist sha for later display (and for static pages parity)
+      try {
+        if (meta && meta.sha256) {
+          setSha(meta.sha256);
+          localStorage.setItem(`onboardx_sha_${contract.id}`, meta.sha256);
+        }
+      } catch (e) {}
       const prevProgress = access ? access.progress || 0 : 0;
       if (meta && meta.access) {
         setAccess(meta.access);
@@ -107,9 +122,9 @@ export function ContractViewer({ contractId }: Props) {
       setSignedCompleted(true);
       // refresh contract state
       await fetchContract();
-      alert('Signed successfully — access tools generated if configured');
+  showToast('Signed successfully — access tools generated if configured', 'success');
     } catch (e: any) {
-      alert('Signing error: ' + (e && e.message ? e.message : 'unknown'));
+  showToast('Signing error: ' + (e && e.message ? e.message : 'unknown'), 'error');
     } finally {
       setSigning(false);
     }
@@ -297,10 +312,15 @@ export function ContractViewer({ contractId }: Props) {
                     a.remove();
                     window.URL.revokeObjectURL(url);
                   } catch (e: any) {
-                    alert('Download failed: ' + (e && e.message ? e.message : 'unknown'));
+                    showToast('Download failed: ' + (e && e.message ? e.message : 'unknown'), 'error');
                   }
                 }} className="btn secondary">Download Signed PDF</button>
               </div>
+            )}
+
+            {/* SHA display: show when available */}
+            {sha && (
+              <div style={{ marginTop: 12 }} className="small mono muted">SHA: {sha}</div>
             )}
 
             {access && (
@@ -339,7 +359,7 @@ export function ContractViewer({ contractId }: Props) {
                               if ((access.progress || 0) === 100) {
                                 window.open(t.url, '_blank');
                               } else {
-                                alert('Please complete onboarding to access Work Dashboard');
+                                showToast('Please complete onboarding to access Work Dashboard', 'warn');
                               }
                               return;
                             }

@@ -5,61 +5,195 @@
   <title>Work Dashboard</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/chat-widget.css" />
-</head>
-<body>
-  <div class="app-shell">
-    <div class="topbar"><div class="brand"><div class="brand__logo">OX</div><div class="brand__title">Work Dashboard (Demo)</div></div></div>
-    <div class="panel" style="max-width:1100px; margin:18px auto">
-      <h3>Distribution Analytics</h3>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-        <div class="stat-card">
-          <div class="stat-value" id="statTotal">—</div>
-          <div class="stat-label">Total Contracts</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="statSigned">—</div>
-          <div class="stat-label">Signed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="statOnboarded">—</div>
-          <div class="stat-label">Fully Onboarded (100%)</div>
-        </div>
-        <div style="flex:1; min-width:260px; display:flex; align-items:center; justify-content:center;">
-          <div id="donutWrap" style="width:160px;height:160px"></div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
-        <div>
-          <h4 style="margin-top:0">Per-Vendor Performance</h4>
-          <div id="vendorChart" style="padding:8px;background:#fff;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.04)"></div>
-        </div>
-        <div>
-          <h4 style="margin-top:0">Recent Completions</h4>
-          <div id="recentList" style="padding:8px;background:#fff;border-radius:8px;max-height:420px;overflow:auto;box-shadow:0 4px 12px rgba(0,0,0,0.04)"></div>
-        </div>
-      </div>
-
-      <div style="margin-top:18px">
-        <h4>All Contracts</h4>
-        <div id="allTable" style="background:#fff;padding:8px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.04)"></div>
-      </div>
-    </div>
-  </div>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    .stat-card{background:#fff;padding:12px;border-radius:8px;min-width:120px;box-shadow:0 6px 18px rgba(13,38,59,0.04);}
-    .stat-value{font-size:22px;font-weight:700}
-    .stat-label{font-size:12px;color:#6b7280}
+    /* Red theme to match React pages */
+    :root{--brand:#ef4444;--brand-600:#dc2626;--muted:#6b7280;--card-bg:#fff}
+    body{background:linear-gradient(180deg,#fff,#fff);color:#0f172a;font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:linear-gradient(90deg,var(--brand),#fb7185);color:#fff}
+    .brand__logo{width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .brand__title{font-weight:600;margin-left:10px}
+    .panel{max-width:1100px;margin:18px auto;padding:18px}
+    h3,h4{color:#111827}
+    .stat-grid{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .stat-card{background:var(--card-bg);padding:14px;border-radius:10px;min-width:140px;box-shadow:0 8px 30px rgba(15,23,42,0.06)}
+    .stat-value{font-size:26px;font-weight:800;color:var(--brand-600)}
+    .stat-label{font-size:12px;color:var(--muted)}
+    #donutWrap{width:160px;height:160px}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    .card-surface{padding:12px;background:var(--card-bg);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,0.04)}
     .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-    .bar-label{width:160px;font-size:13px}
-    .bar-track{flex:1;height:14px;background:#eef2ff;border-radius:8px;overflow:hidden}
-    .bar-fill{height:100%;background:linear-gradient(90deg,#60a5fa,#06b6d4)}
-    .card{background:transparent}
+    .bar-label{width:150px;font-size:13px;color:#0f172a}
+    .bar-track{flex:1;height:14px;background:#fee2e2;border-radius:8px;overflow:hidden}
+    .bar-fill{height:100%;background:linear-gradient(90deg,#ef4444,#fb7185);width:0%;transition:width 900ms cubic-bezier(.2,.8,.2,1)}
     table{width:100%;border-collapse:collapse}
     th,td{padding:8px;border-bottom:1px solid #f3f4f6;font-size:13px}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace}
+    .small{font-size:13px;color:var(--muted)}
+    .muted{color:var(--muted)}
   </style>
-  <script src="/chat-widget.js"></script>
-  <script src="/dashboard.js"></script>
+</head>
+<body>
+  <div class="topbar"><div style="display:flex;align-items:center"><div class="brand__logo">OX</div><div class="brand__title">OnboardX — Work Dashboard</div></div></div>
+
+  <div class="panel">
+    <h3>Distribution Analytics</h3>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-label">Total Contracts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statSigned">—</div>
+        <div class="stat-label">Signed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statOnboarded">—</div>
+        <div class="stat-label">Fully Onboarded (100%)</div>
+      </div>
+      <div style="flex:1;min-width:260px;display:flex;align-items:center;justify-content:center">
+        <div id="donutWrap" class="card-surface" style="display:flex;align-items:center;justify-content:center"></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <h4 style="margin-top:0">Per-Vendor Performance</h4>
+        <div id="vendorChart" class="card-surface"></div>
+      </div>
+      <div>
+        <h4 style="margin-top:0">Recent Completions</h4>
+        <div id="recentList" class="card-surface" style="max-height:420px;overflow:auto"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px">
+      <h4>All Contracts</h4>
+      <div id="allTable" class="card-surface" style="overflow:auto"></div>
+    </div>
+  </div>
+
+  <script>
+    // Dashboard analytics script
+    const API = '';
+    function computeProgress(c){
+      let p = 0;
+      if (c.status === 'signed') p += 30;
+      if (c.events && c.events.slackVisited) p += 10;
+      if (c.events && c.events.notionCompleted) p += 60;
+      if (p > 100) p = 100;
+      return p;
+    }
+
+    function animateCount(el, target){
+      const start = Number(el.textContent) || 0;
+      const duration = 700;
+      const startTime = performance.now();
+      function step(now){
+        const t = Math.min(1, (now - startTime) / duration);
+        const val = Math.round(start + (target - start) * t);
+        el.textContent = String(val);
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function drawDonut(percent){
+      const wrap = document.getElementById('donutWrap');
+      wrap.innerHTML = '';
+      const c = document.createElement('canvas'); c.width = 160; c.height = 160; wrap.appendChild(c);
+      const ctx = c.getContext('2d'); if (!ctx) return;
+      const cx = c.width/2, cy = c.height/2, r = 60;
+      // background ring
+      ctx.clearRect(0,0,c.width,c.height);
+      ctx.lineWidth = 14; ctx.strokeStyle = '#fee2e2'; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+      let current = 0; const target = Math.max(0, Math.min(100, percent)); const start = performance.now();
+      function tick(now){
+        const t = Math.min(1,(now-start)/900);
+        current = target * t;
+        // draw arc
+        ctx.clearRect(0,0,c.width,c.height);
+        ctx.lineWidth = 14; ctx.strokeStyle = '#fee2e2'; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+        // progress
+        const end = -Math.PI/2 + (Math.PI*2) * (current/100);
+        const grad = ctx.createLinearGradient(0,0,c.width,c.height); grad.addColorStop(0,'#ef4444'); grad.addColorStop(1,'#fb7185');
+        ctx.lineWidth = 14; ctx.strokeStyle = grad; ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,end); ctx.stroke();
+        // center label
+        ctx.fillStyle = '#111827'; ctx.font = '700 18px system-ui, Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(Math.round(current) + '%', cx, cy);
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function renderVendorChart(contracts){
+      const byVendor = {};
+      contracts.forEach(c => { const v = c.vendorEmail || c.vendorId || 'unknown'; if (!byVendor[v]) byVendor[v]=[]; byVendor[v].push(c); });
+      const keys = Object.keys(byVendor).sort((a,b)=> byVendor[b].length - byVendor[a].length).slice(0,8);
+      const wrap = document.getElementById('vendorChart'); wrap.innerHTML = '';
+      keys.forEach(k => {
+        const arr = byVendor[k];
+        const avg = Math.round(arr.reduce((s,c)=>s+computeProgress(c),0)/arr.length || 0);
+        const row = document.createElement('div'); row.className='bar-row';
+        const label = document.createElement('div'); label.className='bar-label'; label.textContent = `${k} (${arr.length})`;
+        const track = document.createElement('div'); track.className='bar-track'; track.style.background='#fff5f5';
+        const fill = document.createElement('div'); fill.className='bar-fill'; fill.style.width='0%'; fill.style.background='linear-gradient(90deg,#ef4444,#fb7185)';
+        track.appendChild(fill);
+        const pct = document.createElement('div'); pct.style.minWidth='44px'; pct.style.textAlign='right'; pct.textContent = '0%';
+        row.appendChild(label); row.appendChild(track); row.appendChild(pct); wrap.appendChild(row);
+        // animate
+        setTimeout(()=>{ fill.style.width = avg + '%'; pct.textContent = avg + '%'; }, 80);
+      });
+    }
+
+    function renderRecent(contracts){
+      const recent = contracts.slice().sort((a,b)=> new Date(b.signedAt || b.createdAt || 0) - new Date(a.signedAt || a.createdAt || 0)).filter(c=>c.status === 'signed').slice(0,8);
+      const wrap = document.getElementById('recentList'); wrap.innerHTML = '';
+      recent.forEach(c => {
+        const d = document.createElement('div'); d.style.padding='8px 0'; d.style.borderBottom='1px solid #f3f4f6';
+        d.innerHTML = `<div style="font-weight:700">${c.originalName || c.id}</div><div class="small muted">Signed at: ${c.signedAt ? new Date(c.signedAt).toLocaleString() : '—'} • Vendor: ${c.vendorEmail || c.vendorId || '—'}</div>`;
+        wrap.appendChild(d);
+      });
+      if (!recent.length) wrap.innerHTML = '<div class="small muted">No recent completions</div>';
+    }
+
+    function renderAllTable(contracts){
+      const wrap = document.getElementById('allTable'); wrap.innerHTML = '';
+      const tbl = document.createElement('table'); const thead = document.createElement('thead'); const thRow = document.createElement('tr'); ['ID','Name','Vendor','Status','Progress','SHA'].forEach(h=>{ const th=document.createElement('th'); th.textContent=h; thRow.appendChild(th); }); thead.appendChild(thRow); tbl.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      contracts.forEach(c=>{
+        const tr = document.createElement('tr');
+        const prog = computeProgress(c);
+        const cells = [c.id || '', c.originalName || '', c.vendorEmail || c.vendorId || '', c.status || '', prog + '%', (c.signedFile || c.sha256 || '')];
+        cells.forEach(txt=>{ const td=document.createElement('td'); td.textContent = txt; tr.appendChild(td); });
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody); wrap.appendChild(tbl);
+    }
+
+    async function refresh(){
+      try{
+        const r = await fetch('/api/contracts'); if (!r.ok) return;
+        const list = await r.json();
+        const total = list.length;
+        const signed = list.filter(c=>c.status==='signed').length;
+        const onboarded = list.filter(c=> computeProgress(c)===100).length;
+        animateCount(document.getElementById('statTotal'), total);
+        animateCount(document.getElementById('statSigned'), signed);
+        animateCount(document.getElementById('statOnboarded'), onboarded);
+        // overall percent: average progress
+        const avg = Math.round((list.reduce((s,c)=>s+computeProgress(c),0) / (total || 1))||0);
+        drawDonut(avg);
+        renderVendorChart(list);
+        renderRecent(list);
+        renderAllTable(list);
+      }catch(e){ console.error('dashboard refresh failed', e); }
+    }
+
+    refresh();
+    // refresh every 12s
+    setInterval(refresh, 12000);
+  </script>
+
   <script src="/chat-widget.js"></script>
 </body>
 </html>

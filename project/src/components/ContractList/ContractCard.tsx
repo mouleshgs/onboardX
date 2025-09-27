@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import React from 'react';
 import { API_BASE } from '../../api';
+import showToast from '../../utils/toast';
 import { Send, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import type { Contract, NudgeResponse } from '../../types';
 
@@ -68,12 +69,12 @@ export function ContractCard({ contract, vendorEmail }: ContractCardProps) {
       const data: NudgeResponse = await response.json();
 
       if (response.ok && data?.nudge) {
-        alert(`Nudge sent to ${data.nudge.to || 'distributor'}\n\n"${data.nudge.message}"`);
+        showToast(`Nudge sent to ${data.nudge.to || 'distributor'}: "${data.nudge.message}"`, 'success');
       } else {
-        alert(`Failed to send nudge: ${(data as any)?.error || (data as any)?.detail || 'unknown'}`);
+        showToast(`Failed to send nudge: ${(data as any)?.error || (data as any)?.detail || 'unknown'}`, 'error');
       }
     } catch (error) {
-      alert('Network error');
+      showToast('Network error', 'error');
     } finally {
       setNudging(false);
     }
