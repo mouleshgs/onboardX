@@ -20,6 +20,30 @@ function nanoid(len = 8) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Lightweight CORS middleware (no external dependency)
+// Configure allowed origins via CORS_ORIGIN env (comma-separated). In dev, we echo the request origin so browser accepts it.
+app.use((req, res, next) => {
+  try {
+    const origin = req.headers.origin;
+    const allowed = process.env.CORS_ORIGIN || '*';
+    if (origin) {
+      if (allowed === '*' || (allowed.split(',').map(s => s.trim()).indexOf(origin) !== -1)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+      }
+    } else {
+      // no origin present (server-to-server), allow all
+      res.setHeader('Access-Control-Allow-Origin', allowed === '*' ? '*' : allowed);
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    if (req.method === 'OPTIONS') return res.sendStatus(200);
+  } catch (e) {
+    // ignore errors in CORS handling
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json({ limit: '10mb' }));
 
@@ -239,27 +263,50 @@ app.post('/api/vendor/upload', upload.single('file'), async (req, res) => {
       return res.json({ ok: true, id, file: contracts[id].file });
     }
 
-    // upload to Dropbox
-    const { Dropbox } = require('dropbox');
-    const fetch = require('node-fetch');
-    const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
-    await dbx.filesUpload({ path: dropPath, contents: req.file.buffer, mode: { '.tag': 'overwrite' } });
-
-    // create shared link
-    let link;
+    // upload to Dropbox (if configured). If Dropbox returns an auth error, fall back to local storage.
     try {
-      const resLink = await dbx.sharingCreateSharedLinkWithSettings({ path: dropPath });
-      link = resLink.result.url.replace('?dl=0', '?dl=1');
-    } catch (e) {
-      const list = await dbx.sharingListSharedLinks({ path: dropPath, direct_only: true });
-      if (list.result && list.result.links && list.result.links.length) link = list.result.links[0].url.replace('?dl=0', '?dl=1');
-    }
+      const { Dropbox } = require('dropbox');
+      const fetch = require('node-fetch');
+      const dbx = new Dropbox({ accessToken: process.env.DROPBOX_TOKEN, fetch });
+      await dbx.filesUpload({ path: dropPath, contents: req.file.buffer, mode: { '.tag': 'overwrite' } });
 
-    contracts[id] = { id, file: dropPath, status: 'pending', createdAt: new Date().toISOString(), vendorId, vendorEmail: req.body.vendorEmail, assignedToEmail: distributorEmail, originalName, storageUrl: link };
-    if (firestore) {
-      try { await firestore.collection('contracts').doc(id).set(contracts[id]); } catch (e) { console.warn('Failed to save contract to Firestore', e && e.message); }
+      // create shared link
+      let link;
+      try {
+        const resLink = await dbx.sharingCreateSharedLinkWithSettings({ path: dropPath });
+        link = resLink.result.url.replace('?dl=0', '?dl=1');
+      } catch (e) {
+        try {
+          const list = await dbx.sharingListSharedLinks({ path: dropPath, direct_only: true });
+          if (list.result && list.result.links && list.result.links.length) link = list.result.links[0].url.replace('?dl=0', '?dl=1');
+        } catch (e2) {
+          // ignore
+        }
+      }
+
+      contracts[id] = { id, file: dropPath, status: 'pending', createdAt: new Date().toISOString(), vendorId, vendorEmail: req.body.vendorEmail, assignedToEmail: distributorEmail, originalName, storageUrl: link };
+      if (firestore) {
+        try { await firestore.collection('contracts').doc(id).set(contracts[id]); } catch (e) { console.warn('Failed to save contract to Firestore', e && e.message); }
+      }
+      return res.json({ ok: true, id, storageUrl: link });
+    } catch (e) {
+      // If Dropbox failed (401 unauthorized or other), fall back to local storage and continue
+      console.warn('Dropbox upload failed, falling back to local save:', e && (e.error || e.message || e.toString()));
+      try {
+        const uploadsDir = path.join(__dirname, 'public', 'uploads');
+        if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+        const outPath = path.join(uploadsDir, `${id}.pdf`);
+        fs.writeFileSync(outPath, req.file.buffer);
+        contracts[id] = { id, file: `uploads/${id}.pdf`, status: 'pending', createdAt: new Date().toISOString(), vendorId, vendorEmail: req.body.vendorEmail, assignedToEmail: distributorEmail, originalName };
+        if (firestore) {
+          try { await firestore.collection('contracts').doc(id).set(contracts[id]); } catch (e2) { console.warn('Failed to save contract to Firestore', e2 && e2.message); }
+        }
+        return res.json({ ok: true, id, file: contracts[id].file, note: 'Dropbox upload failed; saved locally' });
+      } catch (e2) {
+        console.error('Fallback local save also failed', e2 && e2.message);
+        return res.status(500).json({ error: 'upload failed', detail: (e2 && e2.message) || String(e2) });
+      }
     }
-    return res.json({ ok: true, id, storageUrl: link });
   } catch (e) {
     console.error('vendor upload failed', e && e.message);
     return res.status(500).json({ error: 'upload failed', detail: (e && e.message) || String(e) });
@@ -947,6 +994,21 @@ app.post('/api/sync-signed', express.json(), async (req, res) => {
   } catch (e) {
     console.error('sync-signed failed', e && e.message);
     return res.status(500).json({ error: 'sync failed', detail: (e && e.message) || String(e) });
+  }
+});
+
+// Lightweight compatibility endpoint used by the demo login pages / React UI.
+// Accepts { idToken, role } and returns OK. This is intentionally permissive
+// for the demo app — in a production app you'd verify the token server-side.
+app.post('/api/user/identify', express.json(), (req, res) => {
+  try {
+    const { idToken, role } = req.body || {};
+    // For demo purposes, just log and return success. Keep minimal to avoid
+    // changing auth behavior in existing flows.
+    if (idToken) console.log('identify:', role || 'unknown role');
+    return res.json({ ok: true, role: role || 'unknown' });
+  } catch (e) {
+    return res.status(400).json({ error: 'invalid' });
   }
 });
 
